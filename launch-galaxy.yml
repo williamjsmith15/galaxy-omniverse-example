@@ -8,7 +8,7 @@ services:
       - 8080:8080
     volumes:
       - omni-galaxy-storage:/galaxy/server/
-      - ./galaxy-tools:/galaxy/server/tools/
+      - ./galaxy-tools:/galaxy/server/tools/test
       - ./galaxy-config/tool_conf.xml:/galaxy/server/config/tool_conf.xml.sample
       - ./galaxy-config/job_conf.xml:/galaxy/server/config/job_conf.xml.sample_basic
       - ./galaxy-config/welcome.html:/galaxy/server/static/welcome.html
