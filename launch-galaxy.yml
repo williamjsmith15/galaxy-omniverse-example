@@ -13,10 +13,5 @@ services:
       - ./galaxy-config/job_conf.xml:/galaxy/server/config/job_conf.xml.sample_basic
       - /var/run/docker.sock:/var/run/docker.sock:ro
       
-  # API call example
-  # image: ghcr.io/uomresearchit/mcri-bioblend:latest
-  # python home/helpers/call-workflow.py --api-key 293bea45e5079a37553433e4170db8f9 --server http://mcri-galaxy:8080 --sensor arisense" 
-      
 volumes:
   omni-galaxy-storage:
-

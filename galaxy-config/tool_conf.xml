@@ -6,10 +6,6 @@
   <section id="send" name="Send Data">
     <tool file="cloud/send.xml" />
   </section>
-  <section id="mcri" name="Manchester i">
-    <tool file="mcri/arisense.xml" />
-    <tool file="mcri/mcri-data-gatherer.xml" />
-  </section>
   <section id="collection_operations" name="Collection Operations">
     <tool file="${model_tools_path}/unzip_collection.xml" labels="new" />
     <tool file="${model_tools_path}/zip_collection.xml" labels="new" />
