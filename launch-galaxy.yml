@@ -8,9 +8,10 @@ services:
       - 8080:8080
     volumes:
       - omni-galaxy-storage:/galaxy/server/
-      - ./galaxy-tools:/galaxy/server/tools/mcri
+      - ./galaxy-tools:/galaxy/server/tools/
       - ./galaxy-config/tool_conf.xml:/galaxy/server/config/tool_conf.xml.sample
       - ./galaxy-config/job_conf.xml:/galaxy/server/config/job_conf.xml.sample_basic
+      - ./galaxy-config/galaxy.yml:/galaxy/server/config/galaxy.yml 
       - /var/run/docker.sock:/var/run/docker.sock:ro
       
 volumes:
