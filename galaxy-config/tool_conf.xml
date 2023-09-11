@@ -58,4 +58,7 @@
     <tool file="plotting/boxplot.xml" hidden="true" />
     <tool file="maf/vcf_to_maf_customtrack.xml" />
   </section>
+  <section id="example_tools" name="Example Tools">
+    <tool file="openmc/openmc/openmc.xml"/>
+  </section>
 </toolbox>
