@@ -1,0 +1,33 @@
+<tool id="openmc" name="OpenMC Neutronics Simulation" version="0.1.0">
+
+    <description>Example neutronics simulation via OpenMC</description>
+  
+    <requirements>
+      <container type="docker">williamjsmith15/example-openmc:31082023</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        python '$__tool_directory__/openmc.py' '$CAD' '$Config' '$TBR' 2>&1 &&
+        mv tracks.h5 '$Tracks'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="CAD" label="CAD" help="DAGMC CAD input for use in OpenMC neutronics. Format: h5m"/>
+      <param type="data" name="Config" label="Config" help="Config file for the settings of running OpenMC. Format: JSON"/>
+    </inputs>
+  
+    <outputs>
+      <data format="txt" name="TBR" label="TBR" help="Tritium Breeding Ratio of the simulation. Format: txt (tbr +- tbr_std)"/>
+      <data format="h5" name="Tracks" label="Tracks" help="File with neutron tracks from OpenMC run. Format: h5"/>
+    </outputs>
+  
+    <help>
+      This tool takes in a 3D geometry and settings file to run a neutronics simulation via the OSS OpenMC.
+    </help>
+  
+    <citations>
+  
+    </citations>
+  </tool>
