@@ -15,7 +15,7 @@ import argparse
 
 parser = argparse.ArgumentParser(
     prog="openmc_run.py",
-    description="OpenMC example run script. Useage: python openmc_run.py <geometry file path> <settings file path> <output file path>",
+    description="OpenMC example run script. Useage: python openmc_run.py <geometry file path> <settings file path>",
 )
 
 parser.add_argument(
@@ -25,19 +25,16 @@ parser.add_argument(
     "config_file",
     help="Settings file with the run settings for the neutronics simulation. Format: JSON",
 )
-parser.add_argument("output_file", help="Path to write the TBR output to. Format: txt")
 
 args = parser.parse_args()
 
 geometry_file = args.geometry_file
 config_file = args.config_file
-output_file = args.output_file
 
 # Read in settings file and split to individual sections
 with open(config_file) as read_file:
     config = json.load(read_file)
 
-sources_config = config["source"]
 geometry_config = config["geometry"]
 settings_config = config["settings"]
 plasma_config = config["plasma_params"]
@@ -56,25 +53,19 @@ model = openmc.model.Model()
 # NOTE: Currently defining these statically, but could be easily done dynamically in future with the JSON configuration file
 blanket = nmm.Material.from_library(
     name="Lithium",
-    temperature=settings_config["temperature"],
     enrichment=7.5,
     enrichment_target="Li6",
+    enrichment_type="ao",
 ).openmc_material
 blanket.name = "blanket"
 
-firstwall = nmm.Material.from_library(
-    name="Tungsten", temperature=settings_config["temperature"]
-).openmc_material
+firstwall = nmm.Material.from_library(name="Tungsten").openmc_material
 firstwall.name = "firstwall"
 
-divertor = nmm.Material.from_library(
-    name="Tungsten", temperature=settings_config["temperature"]
-).openmc_material
+divertor = nmm.Material.from_library(name="Tungsten").openmc_material
 divertor.name = "divertor"
 
-plasma = nmm.Material.from_library(
-    name="DT_plasma", temperature=settings_config["temperature"]
-).openmc_material
+plasma = nmm.Material.from_library(name="DT_plasma").openmc_material
 plasma.name = "plasma"
 
 materials = openmc.Materials([blanket, firstwall, divertor, plasma])
@@ -176,15 +167,6 @@ model.tallies = openmc.Tallies([tbr_tally])
 # RUN OPENMC
 ##################
 
-statepoint_file = openmc.run(tracks=True)
+model.export_to_xml()
 
-# Gather TBR result & write to file
-statepoint = openmc.StatePoint(statepoint_file)
-tally = statepoint.get_tally(name="TBR")
-df = tally.get_pandas_dataframe()
-tally_result = df["mean"].sum()
-tally_std_dev = df["std. dev."].sum()
-
-# Write tally result to an output file
-with open(output_file, "w") as write_f:
-    write_f.write(f"{tally_result} +- {tally_std_dev}")
+openmc.run(tracks=True)

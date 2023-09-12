@@ -8,8 +8,9 @@
   
     <command>
       <![CDATA[
-        python '$__tool_directory__/openmc.py' '$CAD' '$Config' '$TBR' 2>&1 &&
-        mv tracks.h5 '$Tracks'
+        python '$__tool_directory__/openmc_run.py' '$CAD' '$Config' 2>&1 &&
+        mv tracks.h5 '$Tracks' &&
+        mv tallies.out '$TBR'
       ]]>
     </command>
   
@@ -19,7 +20,7 @@
     </inputs>
   
     <outputs>
-      <data format="txt" name="TBR" label="TBR" help="Tritium Breeding Ratio of the simulation. Format: txt (tbr +- tbr_std)"/>
+      <data format="out" name="TBR" label="TBR" help="Tritium Breeding Ratio of the simulation. Format: out"/>
       <data format="h5" name="Tracks" label="Tracks" help="File with neutron tracks from OpenMC run. Format: h5"/>
     </outputs>
   
