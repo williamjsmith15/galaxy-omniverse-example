@@ -6,6 +6,9 @@
   <section id="send" name="Send Data">
     <tool file="cloud/send.xml" />
   </section>
+  <section id="example_tools" name="Example Tools">
+    <tool file="test/openmc/openmc.xml"/>
+  </section>
   <section id="collection_operations" name="Collection Operations">
     <tool file="${model_tools_path}/unzip_collection.xml" labels="new" />
     <tool file="${model_tools_path}/zip_collection.xml" labels="new" />
@@ -57,8 +60,5 @@
   <section id="plots" name="Graph/Display Data">
     <tool file="plotting/boxplot.xml" hidden="true" />
     <tool file="maf/vcf_to_maf_customtrack.xml" />
-  </section>
-  <section id="example_tools" name="Example Tools">
-    <tool file="openmc/openmc/openmc.xml"/>
   </section>
 </toolbox>
