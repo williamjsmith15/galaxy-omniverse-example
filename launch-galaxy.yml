@@ -10,10 +10,12 @@ services:
       - omni-galaxy-storage:/galaxy/server/
       - ./galaxy-tools:/galaxy/server/tools/test
       - ./galaxy-config/tool_conf.xml:/galaxy/server/config/tool_conf.xml.sample
-      - ./galaxy-config/job_conf.xml:/galaxy/server/config/job_conf.xml.sample_basic
+      - ./galaxy-config/job_conf.xml:/galaxy/server/config/job_conf.xml #.sample_basic
       - ./galaxy-config/welcome.html:/galaxy/server/static/welcome.html
       - ./galaxy-config/galaxy.yml:/galaxy/server/config/galaxy.yml 
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /galaxy/server/database/jobs:/galaxy/server/database/jobs
+      - /galaxy/server/tools:/galaxy/server/tools
       
 volumes:
   omni-galaxy-storage:

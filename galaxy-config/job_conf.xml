@@ -2,18 +2,21 @@
 
 <job_conf>
   <plugins>
-    <plugin id="local" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner" workers="4"/>
+    <plugin id="local" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner"/>
   </plugins>
   <destinations default="docker_local">
     <destination id="local" runner="local"/>
     <destination id="docker_local" runner="local">
       <param id="docker_enabled">true</param>
-      <param id="docker_volumes"> $defaults </param>
-      <param id="docker_run_extra_arguments"></param>
+      <!-- <param id="docker_volumes">$galaxy_root:ro,$tool_directory:ro,$job_directory:ro,$working_directory:rw,$default_file_path:rw</param> -->
+      <!-- <param id="docker_run_extra_arguments"></param> -->
       <param id="docker_sudo">false</param>
+      <!-- <param id="tmp_dir">true</param> -->
+      <!-- <param id="require_container">true</param> -->
     </destination>
   </destinations>
   <tools>
-    <tool destination="interactive_local" id="interactive_tool_jupyter_notebook" />
+    <!-- <tool destination="interactive_local" id="interactive_tool_jupyter_notebook" /> -->
+    <!-- <tool destination="docker_local" id="openmc" /> -->
   </tools>
 </job_conf>

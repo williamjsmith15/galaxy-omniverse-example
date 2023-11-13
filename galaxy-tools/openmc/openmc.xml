@@ -12,6 +12,11 @@
         mv tracks.h5 '$Tracks' &&
         mv tallies.out '$TBR'
       ]]>
+      <!-- <![CDATA[
+        docker run williamjsmith15/example-openmc:31082023 python '$__tool_directory__/openmc_run.py' '$CAD' '$Config' 2>&1 &&
+        mv tracks.h5 '$Tracks' &&
+        mv tallies.out '$TBR'
+      ]]> -->
     </command>
   
     <inputs>
