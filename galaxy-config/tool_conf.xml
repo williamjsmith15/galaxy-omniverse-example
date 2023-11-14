@@ -7,7 +7,7 @@
     <tool file="cloud/send.xml" />
   </section>
   <section id="example_tools" name="Example Tools">
-    <tool file="test/openmc/openmc.xml"/>
+    <tool file="example/openmc/openmc.xml"/>
   </section>
   <section id="collection_operations" name="Collection Operations">
     <tool file="${model_tools_path}/unzip_collection.xml" labels="new" />
