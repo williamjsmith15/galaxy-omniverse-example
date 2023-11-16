@@ -1,0 +1,32 @@
+<tool id="2-6" name="2.6 Writing Output to a File" version="0.1.0">
+
+    <description>Tool described in section 2.6 - Writing Output to a File</description>
+  
+    <requirements>
+      <container type="docker">ubuntu:20.04</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        echo '$Text_To_Write' > '$Output_File'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="text" name="Text_To_Write" label="Text_To_Write" help="Text to write to the Output_File. Format: text"/>
+    </inputs>
+
+    <outputs>
+      <data format="txt" name="Output_File" label="Output_File" help="Txt file to print to the std_out. Format: txt"/>
+    </outputs>
+
+    <help>
+      This tool run the command writes the file input 'Text_To_Write' to the txt file 'Output_File' in an Ubuntu 20.04 container.
+      Expected output: 
+        std_out: ''
+        std_err: ''
+        outputs:
+            Output_File: Content of the 'File_To_Write' input
+    </help>
+
+  </tool>
