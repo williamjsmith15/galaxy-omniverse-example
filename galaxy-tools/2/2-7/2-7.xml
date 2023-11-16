@@ -3,12 +3,12 @@
     <description>Tool described in section 2.7 - Running Scripts in Tools</description>
   
     <requirements>
-      <container type="docker">ubuntu:20.04</container>
+      <container type="docker">python:3.10</container>
     </requirements>
   
     <command>
       <![CDATA[
-      python '$__tool_directory__/openmc_run.py' '$Text_To_Write' '$Output_File'
+      python '$__tool_directory__/2-7.py' '$Text_To_Write' '$Output_File'
       ]]>
     </command>
   
