@@ -6,11 +6,7 @@ Setup:
 
 1. Install Docker (or Docker Desktop on Windows)
 
-2. Make the bash files executables:
-
-    `chmod u+x *.sh`
-
-3. Run the start script:
+2. Run the start script:
 
     `./start-galaxy.sh`
 
