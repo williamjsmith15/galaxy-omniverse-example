@@ -1,0 +1,22 @@
+<tool id="2-4" name="2.4 Simple Command in Container" version="0.1.0">
+
+    <description>Tool described in section 2.4 - Running a Simple Command in a Container</description>
+  
+    <requirements>
+      <container type="docker">ubuntu:20.04</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        echo "Hello World"
+      ]]>
+    </command>
+  
+    <help>
+      This tool run the command 'echo "Hello World"'' in an Ubuntu 20.04 container.
+      Expected output: 
+        std_out: 'Hello World'
+        std_err: ''
+    </help>
+
+  </tool>

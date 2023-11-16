@@ -6,6 +6,9 @@
   <section id="send" name="Send Data">
     <tool file="cloud/send.xml" />
   </section>
+  <section id="2" name="Secion 2 Tools">
+    <tool file="2/2-4/2-4.xml" />
+  </section>
   <section id="example_tools" name="Example Tools">
     <tool file="example/openmc/openmc.xml"/>
   </section>
