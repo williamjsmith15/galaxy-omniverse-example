@@ -19,8 +19,8 @@
     <help>
       This tool run the command cats the file input 'File_To_Print' in an Ubuntu 20.04 container.
       Expected output: 
-        std_out: Content of the 'File_To_Print' input
-        std_err: ''
+      std_out: Content of the 'File_To_Print' input
+      std_err: ''
     </help>
 
   </tool>

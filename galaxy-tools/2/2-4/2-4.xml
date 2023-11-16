@@ -15,8 +15,8 @@
     <help>
       This tool run the command 'echo "Hello World"'' in an Ubuntu 20.04 container.
       Expected output: 
-        std_out: 'Hello World'
-        std_err: ''
+      std_out: 'Hello World'
+      std_err: ''
     </help>
 
   </tool>
