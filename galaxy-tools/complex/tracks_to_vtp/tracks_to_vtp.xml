@@ -1,0 +1,30 @@
+<tool id="tracks_to_vtp" name="Tracks h5 to vtp" version="0.1.0">
+
+    <description>Neutron tracks converter from h5 to vtp</description>
+  
+    <requirements>
+        <container type="docker">williamjsmith15/omniverse-openmc:05062023</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        openmc-track-to-vtk '$Tracks_h5' &&
+        mv tracks_0.vtp '$Tracks_vtp'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="Tracks_h5" label="tracks.h5"/>
+    </inputs>
+  
+    <outputs>
+      <data format="vtp" name="Tracks_vtp" label="tracks_0"/>
+    </outputs>
+  
+    <help>
+      This tool takes in neutroncis tracks.h5 file and outputs them in a vtp file format
+    </help>
+  
+    <citations>
+    </citations>
+  </tool>
