@@ -1,0 +1,30 @@
+<tool id="h5m_to_vtk" name="CAD h5m to vtk" version="0.1.0">
+
+    <description>h5m to vtk CAD converter</description>
+  
+    <requirements>
+        <container type="docker">williamjsmith15/omniverse-openmc:05062023</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        mbconvert '$h5m_CAD' dagmc.vtk 2>&1 &&
+        mv dagmc.vtk '$vtk_CAD'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="h5m_CAD" label="dagmc.h5m"/>
+    </inputs>
+  
+    <outputs>
+      <data format="vtk" name="vtk_CAD" label="dagmc_vtk"/>
+    </outputs>
+  
+    <help>
+      This tool takes in a h5m CAD file and outputs the converted file in vtk format.
+    </help>
+  
+    <citations>
+    </citations>
+  </tool>

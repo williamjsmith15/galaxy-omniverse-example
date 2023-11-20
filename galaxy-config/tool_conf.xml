@@ -15,6 +15,7 @@
   </section>
   <section id="3" name="Section 3 Tools">
     <tool file="3/openmc/openmc.xml"/>
+    <tool file="3/h5m_to_vtk/h5m_to_vtk.xml"/>
   </section>
   <section id="collection_operations" name="Collection Operations">
     <tool file="${model_tools_path}/unzip_collection.xml" labels="new" />
