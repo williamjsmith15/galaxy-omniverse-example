@@ -43,10 +43,6 @@ geometry_config = config["geometry"]
 settings_config = config["settings"]
 plasma_config = config["plasma_params"]
 
-# Set up the reflective angles for the simulation
-angle_start = 0
-angle_stop = 90
-
 # Set up the openmc model to add all the simulation settings to
 model = openmc.model.Model()
 
@@ -92,16 +88,16 @@ vac_surf = openmc.Sphere(
 
 # creates reflective surfaces at 0 and 90 degrees
 reflective_1 = openmc.Plane(
-    a=math.sin(math.radians(angle_start)),
-    b=-math.cos(math.radians(angle_start)),
+    a=math.sin(math.radians(0)),
+    b=-math.cos(math.radians(0)),
     c=0.0,
     d=0.0,
     surface_id=9991,
     boundary_type="reflective",
 )
 reflective_2 = openmc.Plane(
-    a=math.sin(math.radians(angle_stop)),
-    b=-math.cos(math.radians(angle_stop)),
+    a=math.sin(math.radians(90)),
+    b=-math.cos(math.radians(90)),
     c=0.0,
     d=0.0,
     surface_id=9990,
@@ -132,7 +128,7 @@ source_single = ops.TokamakSource(
     minor_radius=geometry_config["minor_radius"],
     elongation=geometry_config["elongation"],
     triangularity=geometry_config["triangularity"],
-    angles=(math.radians(angle_start), math.radians(angle_stop)),
+    angles=(math.radians(0), math.radians(90)),
     pedestal_radius=0.8 * geometry_config["minor_radius"],
     # Plasma parameters
     mode=plasma_config["plasma_mode"],  # Confinement mode

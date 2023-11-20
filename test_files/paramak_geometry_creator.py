@@ -1,20 +1,23 @@
 """
-    This is a file to create an example geometry for the OpenMC workflow tool
-    The geometry is a simple reactor setup with a plasma, blanket, first wall and divertor
+This is a file to create an example geometry for the OpenMC workflow tool
+The geometry is a simple reactor setup with a plasma, blanket, first wall and divertor
 
-    This can be run in the docker container williamjsmith15/omniverse-openmc:05062023 with the command:
-        docker run -it -v $PWD/:/home/ williamjsmith15/omniverse-openmc:05062023 /bin/bash
-    which will mount the current directory to the docker container and allow you to run this script with:
-        python paramak_geometry_creator.py <openmc_config.json>
+This can be run in the docker container williamjsmith15/omniverse-openmc:05062023 with the command:
+    docker run -it -v $PWD/:/home/ williamjsmith15/omniverse-openmc:05062023 /bin/bash
+which will mount the current directory to the docker container.
 
-    where the json file is the one created in the openmc_json_creator.py file
+RUn the script with:
+    python paramak_geometry_creator.py <openmc_config.json>
+
+where the json file is the one created in the openmc_json_creator.py file
 """
+import json
+import argparse
+import numpy as np
 
 import paramak
-import numpy as np
-import argparse
 from stl_to_h5m import stl_to_h5m
-import json
+
 
 parser = argparse.ArgumentParser(
     prog="paramak_generator.py", description="Paramak geometry generator"
@@ -29,7 +32,14 @@ config_path = args.config_file
 
 
 def parametric_blanket(config_dict):
+    """
+    Generates a parametric blanket geometry for the OpenMC workflow tool
 
+    Inputs:
+        config_dict (dict): Dictionary of the parameters for the geometry creation
+    Outputs:
+        None
+    """
     plasma = paramak.Plasma(
         minor_radius=config_dict["minor_radius"],
         major_radius=config_dict["major_radius"],
@@ -91,9 +101,9 @@ def parametric_blanket(config_dict):
     blanket.export_stl("blanket.stl")
     firstwall.export_stl("firstwall.stl")
     plasma.export_stl("plasma.stl")
-    reactor = paramak.Reactor([divertor, blanket, firstwall, plasma])
+    # reactor = paramak.Reactor([divertor, blanket, firstwall, plasma])
 
-    h5m_file = stl_to_h5m(
+    stl_to_h5m(
         files_with_tags=[
             ("divertor.stl", "divertor"),
             ("blanket.stl", "blanket"),
@@ -107,6 +117,6 @@ def parametric_blanket(config_dict):
 if __name__ == "__main__":
     with open(config_path, "r") as f:
         data = json.load(f)
-        config_dict = data["geometry"]
+        config = data["geometry"]
 
-    parametric_blanket(config_dict)
+    parametric_blanket(config)
