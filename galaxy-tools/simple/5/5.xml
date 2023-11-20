@@ -1,6 +1,6 @@
-<tool id="2-7" name="2.7 Running Scripts in Tools" version="0.1.0">
+<tool id="5" name="Tool 5" version="0.1.0">
 
-    <description>Tool described in section 2.7 - Running Scripts in Tools</description>
+    <description>Simple Tool 5 - Running Scripts in Tools</description>
   
     <requirements>
       <container type="docker">python:3.10</container>
@@ -8,7 +8,7 @@
   
     <command>
       <![CDATA[
-      python '$__tool_directory__/2-7.py' '$Text_To_Write' '$Output_File'
+      python '$__tool_directory__/5.py' '$Text_To_Write' '$Output_File'
       ]]>
     </command>
   

@@ -1,6 +1,6 @@
-<tool id="2-6" name="2.6 Writing Output to a File" version="0.1.0">
+<tool id="4" name="Tool 4" version="0.1.0">
 
-    <description>Tool described in section 2.6 - Writing Output to a File</description>
+    <description>Simple Tool 4 - Writing Output to a File</description>
   
     <requirements>
       <container type="docker">ubuntu:20.04</container>

@@ -1,6 +1,6 @@
-<tool id="2-5-i" name="2.5i Using a Text-Based Input" version="0.1.0">
+<tool id="2" name="Tool 2" version="0.1.0">
 
-    <description>Tool described in section 2.5i - Using a Text-Based Input</description>
+    <description>Simple Tool 2 - Using a Text-Based Input</description>
   
     <requirements>
       <container type="docker">ubuntu:20.04</container>

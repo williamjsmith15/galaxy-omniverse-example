@@ -1,6 +1,6 @@
-<tool id="2-5-ii" name="2.5ii Using a File-Based Input" version="0.1.0">
+<tool id="3" name="Tool 3" version="0.1.0">
 
-    <description>Tool described in section 2.5ii - Using a File-Based Input</description>
+    <description>Simple Tool 3 - Using a File-Based Input</description>
   
     <requirements>
       <container type="docker">ubuntu:20.04</container>

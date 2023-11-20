@@ -6,16 +6,16 @@
   <section id="send" name="Send Data">
     <tool file="cloud/send.xml" />
   </section>
-  <section id="2" name="Secion 2 Tools">
-    <tool file="2/2-4/2-4.xml" />
-    <tool file="2/2-5-i/2-5-i.xml" />
-    <tool file="2/2-5-ii/2-5-ii.xml" />
-    <tool file="2/2-6/2-6.xml" />
-    <tool file="2/2-7/2-7.xml" />
+  <section id="simple" name="Simple Example Tools">
+    <tool file="simple/1/1.xml" />
+    <tool file="simple/2/2.xml" />
+    <tool file="simple/3/3.xml" />
+    <tool file="simple/4/4.xml" />
+    <tool file="simple/5/5.xml" />
   </section>
-  <section id="3" name="Section 3 Tools">
-    <tool file="3/openmc/openmc.xml"/>
-    <tool file="3/h5m_to_vtk/h5m_to_vtk.xml"/>
+  <section id="complex" name="Complex Example Tools">
+    <tool file="complex/openmc/openmc.xml"/>
+    <tool file="complex/h5m_to_vtk/h5m_to_vtk.xml"/>
   </section>
   <section id="collection_operations" name="Collection Operations">
     <tool file="${model_tools_path}/unzip_collection.xml" labels="new" />
