@@ -1,25 +1,29 @@
 """
-    A very simple script to run an OpenMC simulation with a tokamak source and a reflective boundary condition (0 and 90 degrees).
-    The script takes in a geometry file, a settings file and an output file path as arguments.
+A very simple script to run an OpenMC simulation with a tokamak source and a reflective boundary
+    condition (0 and 90 degrees).
 
-    It is intentionally kept simple as the intention is to use this as an example of integrating scientific codes into Galaxy workflows 
-        rather than a proper scientific application.
+The script takes in a geometry file, a settings file and an output file path as arguments.
+
+It is intentionally kept simple as the intention is to use this as an example of integrating
+    scientific codes into Galaxy workflows  rather than a proper scientific application.
 """
 
-import openmc
-import neutronics_material_maker as nmm
-import openmc_plasma_source as ops
 import math
 import json
 import argparse
 
+import openmc
+import neutronics_material_maker as nmm
+import openmc_plasma_source as ops
+
 parser = argparse.ArgumentParser(
     prog="openmc_run.py",
-    description="OpenMC example run script. Useage: python openmc_run.py <geometry file path> <settings file path>",
+    description="OpenMC example run script. Useage: python openmc_run.py <geometry> <settings>",
 )
 
 parser.add_argument(
-    "geometry_file", help="Geometry CAD file for simulation. Format: h5m"
+    "geometry_file",
+    help="Geometry CAD file for simulation. Format: h5m"
 )
 parser.add_argument(
     "config_file",
@@ -32,7 +36,7 @@ geometry_file = args.geometry_file
 config_file = args.config_file
 
 # Read in settings file and split to individual sections
-with open(config_file) as read_file:
+with open(config_file, 'r') as read_file:
     config = json.load(read_file)
 
 geometry_config = config["geometry"]
@@ -50,7 +54,8 @@ model = openmc.model.Model()
 # MATERIALS
 ##################
 
-# NOTE: Currently defining these statically, but could be easily done dynamically in future with the JSON configuration file
+# NOTE: Currently defining these statically
+# Could be easily done dynamically in future with the JSON configuration file
 blanket = nmm.Material.from_library(
     name="Lithium",
     enrichment=7.5,
@@ -75,7 +80,8 @@ model.materials = materials
 # GEOMETRY
 ##################
 
-# NOTE: Currently defining most of this statically, but could be easily done dynamically in future with the JSON configuration file
+# NOTE: Currently defining most of this statically
+# Could be easily done dynamically in future with the JSON configuration file
 
 dagmc_univ = openmc.DAGMCUniverse(filename=geometry_file)
 
@@ -118,7 +124,8 @@ model.geometry = geometry
 
 settings = openmc.Settings()
 
-# NOTE: Currently assuming a tokamak source, but could be easily changed dynamically in future with the JSON configuration file
+# NOTE: Currently assuming a tokamak source
+# Could be easily changed dynamically in future with the JSON configuration file
 source_single = ops.TokamakSource(
     # Geometry parameters
     major_radius=geometry_config["major_radius"],
@@ -158,7 +165,7 @@ model.settings = settings
 # TALLIES
 ##################
 
-tbr_tally = openmc.Tally(name=("TBR"))
+tbr_tally = openmc.Tally(name="TBR")
 tbr_tally.scores = ["H3-production"]
 
 model.tallies = openmc.Tallies([tbr_tally])
