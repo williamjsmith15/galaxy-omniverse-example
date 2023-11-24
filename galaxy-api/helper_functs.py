@@ -1,7 +1,10 @@
-from bioblend.galaxy import GalaxyInstance
-from os import remove
 import uuid
 import logging as log
+
+from os import remove
+from os import path
+
+from bioblend.galaxy import GalaxyInstance
 
 
 def new_upload(gi, history, name, string):
@@ -117,7 +120,16 @@ def launch_workflow(server, api_key, workflow_name, inputs):
         if input[0] == "dataset":
             uploads = []
             for name, string in inputs.items():
-                if input[1] == name:
+                if input[1] != name:
+                    continue
+                # Check for case of input being a file or a string
+                if path.isfile(string):
+                    # Input is a file
+                    uploads.append(
+                        gi.tools.upload_file(string, new_hist['id'])
+                    )
+                else:
+                    # Input is a string
                     uploads.append(
                         new_upload(gi, new_hist['id'], name, string)
                     )
