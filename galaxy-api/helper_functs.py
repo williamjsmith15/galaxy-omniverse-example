@@ -5,6 +5,20 @@ import logging as log
 
 
 def new_upload(gi, history, name, string):
+    """
+    Function to upload a string to a galaxy history as a dataset
+        write the string to a file then upload the file to the history
+        then remove the file
+
+    Args:
+        gi (GalaxyInstance): GalaxyInstance object
+        history (string): History ID
+        name (string): Name of the dataset
+        string (string): String to be uploaded to the history
+
+    Returns:
+        upload (dict): Dictionary of the uploaded dataset
+    """
     with open(name, 'w') as f:
         f.write(string)
     upload = gi.tools.upload_file(name, history)
@@ -14,6 +28,15 @@ def new_upload(gi, history, name, string):
 def check_server_api(server, api_key):
     """
     Function to check if the provided API key and server address are valid
+
+    Args:
+        server (string): Galaxy server address
+        api_key (string): User generated string from galaxy instance
+            to create: User > Preferences > Manage API Key > Create a new key
+
+    Returns:
+        True if server and api key are valid
+        False if server or api key are invalid
     """
     try:
         GalaxyInstance(url=server)
@@ -34,6 +57,15 @@ def check_workflow(server, api_key, workflow_name):
     """
     Function to check if the workflow that is being referenced is part of
     the workflows available on the galaxy instance
+
+    Args:
+        server (string): Galaxy server address
+        api_key (string): User generated string from galaxy instance
+            to create: User > Preferences > Manage API Key > Create a new key
+        workflow_name (string): Target workflow name
+    Returns:
+        True if workflow exists
+        False if workflow does not exist
     """
     workflow_galaxy = get_workflows(server, api_key)
 
@@ -48,14 +80,18 @@ def launch_workflow(server, api_key, workflow_name, inputs):
     """
     Function to call galaxy workflow via API
 
-    Usage:
-        call_api(
-            launch_config = json_launch
-        )
-
     Args:
-        launch_config (dict): dictionary containing server, api_key,
-            workflow_name, and inputs
+        server (string): Galaxy server address
+        api_key (string): User generated string from galaxy instance
+            to create: User > Preferences > Manage API Key > Create a new key
+        workflow_name (string): Target workflow name
+        inputs (dict): Dictionary of inputs for the workflow, these should
+            be named the same as the inputs in the workflow
+            format: {input_name: input_string/filename, ...}
+
+    Returns:
+        True if workflow successfully launched
+        False if workflow failed to launch
     """
     # Check server and api key are valid
     if not check_server_api(server=server, api_key=api_key):
@@ -124,21 +160,16 @@ def get_inputs(server, api_key, workflow_name):
     """
     Function to get an array of inputs for a given galaxy workflow
 
-    Usage:
-        get_inputs(
-            server = "http://mcfe.duckdns.org/",
-            api_key = "ea8caa3beffee9c8d58c8b0a092d936e",
-            workflow_name = "More Complex Test Workflow",
-        )
-
     Args:
         server (string): Galaxy server address
         api_key (string): User generated string from galaxy instance
             to create: User > Preferences > Manage API Key > Create a new key
         workflow_name (string): Target workflow name
+
     Returns:
         inputs (array of strings): Input files expected by the workflow, these
-        will be in the same order as they should be given in the main API call
+            will be in the same order as they should be given in the main API call
+            format: [(type, name, id), ...]
     """
     # Check server and api key are valid
     if not check_server_api(server=server, api_key=api_key):
@@ -175,18 +206,12 @@ def get_outputs(server, api_key, workflow_name):
     """
     Function to get an array of outputs for a given galaxy workflow
 
-    Usage:
-        get_outputs(
-            server = "http://mcfe.duckdns.org/",
-            api_key = "ea8caa3beffee9c8d58c8b0a092d936e",
-            workflow_name = "More Complex Test Workflow",
-        )
-
     Args:
         server (string): Galaxy server address
         api_key (string): User generated string from galaxy instance
             to create: User > Preferences > Manage API Key > Create a new key
         workflow_name (string): Target workflow name
+
     Returns:
         outputs (array of strings): Output files given by the workflow,
             these are the names that can be requested as workflow outputs
@@ -234,13 +259,11 @@ def get_workflows(server, api_key):
     """
     Function to get an array of workflows available on a given galaxy instance
 
-    Usage:
-        get_workflows(
-            config_dict
-        )
-
     Args:
-        get_workflows_config (dict): dictionary containing server and api_key
+        server (string): Galaxy server address
+        api_key (string): User generated string from galaxy instance
+            to create: User > Preferences > Manage API Key > Create a new key
+
     Returns:
         workflows (array of strings): Workflows available to be run on the
             galaxy instance provided
