@@ -154,6 +154,7 @@ settings.source = source_single.sources
 settings.batches = settings_config["batches"]
 settings.particles = settings_config["particles"]
 settings.run_mode = settings_config["run_mode"]
+settings.max_tracks = 100
 
 model.settings = settings
 
