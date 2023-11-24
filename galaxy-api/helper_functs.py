@@ -1,5 +1,6 @@
 from bioblend.galaxy import GalaxyInstance
 from os import remove
+import uuid
 import logging as log
 
 
@@ -10,13 +11,10 @@ def new_upload(gi, history, name, string):
     remove(name)
     return upload
 
-def check_server_api(check_config):
+def check_server_api(server, api_key):
     """
     Function to check if the provided API key and server address are valid
     """
-    server = check_config['server']
-    api_key = check_config['api_key']
-
     try:
         GalaxyInstance(url=server)
     except ValueError:
@@ -29,25 +27,24 @@ def check_server_api(check_config):
     except Exception:
         log.error("API key is not valid")
         return False
+
     return True
 
-def check_workflow(check_config):
+def check_workflow(server, api_key, workflow_name):
     """
     Function to check if the workflow that is being referenced is part of
     the workflows available on the galaxy instance
     """
+    workflow_galaxy = get_workflows(server, api_key)
 
-    workflow_galaxy = get_workflows(check_config)
-    workflow_to_check = check_config['workflow_name']
-
-    if workflow_to_check not in workflow_galaxy:
-        log.error(f"Workflow {workflow_to_check} not found on galaxy instance")
+    if workflow_name not in workflow_galaxy:
+        log.error(f"Workflow {workflow_name} not found on galaxy instance")
         return False
     else:
         return True
 
 
-def launch_workflow(launch_config):
+def launch_workflow(server, api_key, workflow_name, inputs):
     """
     Function to call galaxy workflow via API
 
@@ -60,29 +57,20 @@ def launch_workflow(launch_config):
         launch_config (dict): dictionary containing server, api_key,
             workflow_name, and inputs
     """
-    try:
-        server = launch_config['server']
-        api_key = launch_config['api_key']
-        workflow_name = launch_config['workflow_name']
-        inputs = launch_config['inputs']
-        uid = launch_config['uid']
-    except KeyError:
-        log.error("Key error, one of the keys provided is not valid")
-        return False
-
     # Check server and api key are valid
-    if not check_server_api(launch_config):
+    if not check_server_api(server=server, api_key=api_key):
         return False
     # Check workflow is accessible / exists
-    if not check_workflow(launch_config):
+    if not check_workflow(server=server, api_key=api_key, workflow_name=workflow_name):
         return False
 
-    expected_inputs = get_inputs(launch_config)
+    expected_inputs = get_inputs(server=server, api_key=api_key, workflow_name=workflow_name)
 
     gi = GalaxyInstance(url=server, key=api_key)
 
     # Create new history with name history_name
-    new_hist = gi.histories.create_history(name=uid)
+    uid = str(uuid.uuid4())
+    new_hist = gi.histories.create_history(name=workflow_name+uid)
 
     # Upload files and parameters to the history
     workflow_inputs = {}
@@ -132,7 +120,7 @@ def launch_workflow(launch_config):
     return True
 
 
-def get_inputs(get_inputs_config):
+def get_inputs(server, api_key, workflow_name):
     """
     Function to get an array of inputs for a given galaxy workflow
 
@@ -152,19 +140,11 @@ def get_inputs(get_inputs_config):
         inputs (array of strings): Input files expected by the workflow, these
         will be in the same order as they should be given in the main API call
     """
-    try:
-        server = get_inputs_config['server']
-        api_key = get_inputs_config['api_key']
-        workflow_name = get_inputs_config['workflow_name']
-    except KeyError:
-        log.error("Key error, one of the keys provided is not valid")
-        return False
-
     # Check server and api key are valid
-    if not check_server_api(get_inputs_config):
+    if not check_server_api(server=server, api_key=api_key):
         return False
     # Check workflow exists
-    if not check_workflow(get_inputs_config):
+    if not check_workflow(server=server, api_key=api_key, workflow_name=workflow_name):
         return False
 
     gi = GalaxyInstance(url=server, key=api_key)
@@ -191,7 +171,7 @@ def get_inputs(get_inputs_config):
     return input_array
 
 
-def get_outputs(get_outputs_config):
+def get_outputs(server, api_key, workflow_name):
     """
     Function to get an array of outputs for a given galaxy workflow
 
@@ -211,18 +191,10 @@ def get_outputs(get_outputs_config):
         outputs (array of strings): Output files given by the workflow,
             these are the names that can be requested as workflow outputs
     """
-    try:
-        server = get_outputs_config['server']
-        api_key = get_outputs_config['api_key']
-        workflow_name = get_outputs_config['workflow_name']
-    except KeyError:
-        log.error("Key error, one of the keys provided is not valid")
-        return False
-
     # Check server and api key are valid
-    if not check_server_api(get_outputs_config):
+    if not check_server_api(server=server, api_key=api_key):
         return False
-    if not check_workflow(get_outputs_config):
+    if not check_workflow(server=server, api_key=api_key, workflow_name=workflow_name):
         return False
 
     gi = GalaxyInstance(url=server, key=api_key)
@@ -258,7 +230,7 @@ def get_outputs(get_outputs_config):
     return outputs
 
 
-def get_workflows(get_workflows_config):
+def get_workflows(server, api_key):
     """
     Function to get an array of workflows available on a given galaxy instance
 
@@ -274,14 +246,7 @@ def get_workflows(get_workflows_config):
             galaxy instance provided
     """
     # Check server and api key are valid
-    if not check_server_api(get_workflows_config):
-        return False
-
-    try:
-        server = get_workflows_config['server']
-        api_key = get_workflows_config['api_key']
-    except KeyError:
-        log.error("Key error, one of the keys provided is not valid")
+    if not check_server_api(server=server, api_key=api_key):
         return False
 
     gi = GalaxyInstance(url=server, key=api_key)
