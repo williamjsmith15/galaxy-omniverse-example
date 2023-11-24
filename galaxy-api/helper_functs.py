@@ -66,6 +66,7 @@ def check_workflow(server, api_key, workflow_name):
         api_key (string): User generated string from galaxy instance
             to create: User > Preferences > Manage API Key > Create a new key
         workflow_name (string): Target workflow name
+
     Returns:
         True if workflow exists
         False if workflow does not exist
