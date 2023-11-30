@@ -5,8 +5,8 @@ api_key = ''
 workflow_name = ''
 
 inputs = {
-    'input1': 'path/to/input1.txt',
-    'input2': 'path/to/input2.txt'
+    'CAD': '../test_files/dagmc.h5m',
+    'JSON_Config': '../test_files/openmc_config.json',
 }
 
 print(get_workflows(server, api_key))
