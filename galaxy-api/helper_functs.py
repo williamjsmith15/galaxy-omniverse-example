@@ -110,7 +110,7 @@ def launch_workflow(server, api_key, workflow_name, inputs):
 
     # Create new history with name history_name
     uid = str(uuid.uuid4())
-    new_hist = gi.histories.create_history(name=workflow_name+uid)
+    new_hist = gi.histories.create_history(name=workflow_name + '_' + uid)
 
     # Upload files and parameters to the history
     workflow_inputs = {}
