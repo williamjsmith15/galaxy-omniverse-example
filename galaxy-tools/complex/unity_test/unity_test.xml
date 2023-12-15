@@ -1,0 +1,30 @@
+<tool id="unity_test" name="Unity Cube Test " version="0.1.0">
+
+    <description>Test Unity Script to Create a Cube</description>
+  
+    <requirements>
+        <container type="docker">omer568/unity_test:151223</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        /home/CubeGenerator2.x86_64 '$cube_dimensions' -nographics -batchmode &&
+        cp GeneratedCube.obj '$cube_output'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="text" name="cube_dimensions" label="cube_dimensions"/>
+    </inputs>
+  
+    <outputs>
+      <data format="obj" name="cube_output" label="cube_output"/>
+    </outputs>
+  
+    <help>
+      This tool generates a obj file of a cube with the given input dimensions.
+    </help>
+  
+    <citations>
+    </citations>
+  </tool>
