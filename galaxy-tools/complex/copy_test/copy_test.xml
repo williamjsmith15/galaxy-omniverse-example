@@ -8,8 +8,8 @@
   
     <command>
       <![CDATA[
-        cp -rf '$__tool_directory__/$fuel_type/text.txt' /home/text.txt &&
-        cat /home/text.txt > '$output'
+        cp -r '$__tool_directory__/$fuel_type/' /home/ &&
+        cat /home/'$fuel_type'/text.txt > '$output'
       ]]>
     </command>
   
