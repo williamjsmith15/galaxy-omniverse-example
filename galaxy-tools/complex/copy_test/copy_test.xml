@@ -1,0 +1,30 @@
+<tool id="copy_test" name="Unity File Copy Test" version="0.1.0">
+
+    <description>Test tool for copying files for Unity</description>
+  
+    <requirements>
+        <container type="docker">omer568/unity_test:151223</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        cp -rf '$__tool_directory__/$fuel_type/text.txt' /home/text.txt &&
+        cat /home/text.txt > '$output'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="text" name="fuel_type" label="fuel_type"/>
+    </inputs>
+  
+    <outputs>
+      <data format="txt" name="output" label="output"/>
+    </outputs>
+  
+    <help>
+      Tool copies a folder based on name from tool input, and then writes the contents of the file to the output variable.
+    </help>
+  
+    <citations>
+    </citations>
+  </tool>
