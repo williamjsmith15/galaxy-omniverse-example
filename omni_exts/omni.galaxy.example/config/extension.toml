@@ -53,7 +53,9 @@ dependencies = [
 
 # Commands passed to pip install before extension gets enabled. Can also contain flags, like `--upgrade`, `--no--index`, etc.
 # Refer to: https://pip.pypa.io/en/stable/reference/requirements-file-format/
-requirements = []
+requirements = [
+    'bioblend',
+]
 
 # Optional list of modules to import before (check) and after pip install if different from packages in requirements.
 # modules = [

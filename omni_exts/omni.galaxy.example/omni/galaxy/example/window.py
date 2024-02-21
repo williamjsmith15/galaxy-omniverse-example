@@ -1,7 +1,12 @@
 __all__ = ["Window"]
 
+# Add the api helper functions to the python path
 import sys
-sys.path.append("../../../../../galaxy-api/")
+import os
+current_path = os.path.dirname(os.path.abspath(__file__))
+parent_path = current_path.split('omni_exts')[0]
+api_path = os.path.join(parent_path, "galaxy-api")
+sys.path.append(api_path)
 
 # import asyncio
 import omni.ui as ui
@@ -15,7 +20,7 @@ SPACING = 4
 
 default = {
     "galaxy_server": "localhost:8080",
-    "galaxy_api_key": "f975ed2abd480b64b39a53b6e74ca9fa",
+    "galaxy_api_key": "59974a0f0365840a3440aa3022801cdc",
     "workflow_idx": 0,
     "workflow_inputs": {},
 }
@@ -161,11 +166,11 @@ class Window(ui.Window):
         if len(self.workflow_inputs) > 0 and len(self.workflows) > 0:
             ui.Label("Inputs:")
             self.settings["workflow_inputs"] = {}
-            for type, name in self.workflow_inputs:
+            for input_type, name in self.workflow_inputs:
                 with ui.HStack(height=0, spacing=SPACING):
                     ui.Label(name)
-                    ui.Label(type)
-                    if type == "dataset":
+                    ui.Label(input_type)
+                    if input_type == "dataset":
                         ui.Label("Need to implement this into the extension, file selector, upload to minio allow pull from minio on listener end")
                     else:
                         if name == "password":
@@ -222,7 +227,8 @@ class Window(ui.Window):
         workflow_idx = self.settings["workflow_idx"].get_item_value_model(None, 1).get_value_as_int()
         workflow = self.workflows[workflow_idx]
 
-        self.workflow_inputs = get_inputs(server, api_key, workflow)
+        for input_type, name, idx in get_inputs(server, api_key, workflow):
+            self.workflow_inputs.append((input_type, name))
         self._new_print(f"Inputs: {self.workflow_inputs}")
 
     def _get_outputs(self):
@@ -245,6 +251,8 @@ class Window(ui.Window):
         workflow = self.workflows[workflow_idx]
 
         for workflow_input in self.workflow_inputs:
+            print(workflow_input)
+            print(self.settings["workflow_inputs"][workflow_input].get_value_as_string())
             value = self.settings["workflow_inputs"][workflow_input].get_value_as_string()
             inputs[workflow_input] = value
 
