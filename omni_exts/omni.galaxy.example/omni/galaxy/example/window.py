@@ -46,9 +46,6 @@ class Window(ui.Window):
     workflow_inputs = []
     workflow_outputs = []
 
-    galaxy_listen_running = False
-    galaxy_listen_client = None
-
     initial_build = True
 
     output_field = None
@@ -149,27 +146,6 @@ class Window(ui.Window):
             self.settings["galaxy_api_key"] = ui.StringField(password_mode=True).model
             self.settings["galaxy_api_key"].set_value(default["galaxy_api_key"])
 
-        with ui.HStack(height=0, spacing=SPACING):
-            ui.Label("UID:")
-            self.settings["uid"] = ui.StringField().model
-            self.settings["uid"].set_value(default["uid"])
-
-        ui.Label("MQTT Server Settings", width=self.label_width)
-        with ui.HStack(height=0, spacing=SPACING):
-            ui.Label("Server:")
-            self.settings["server"] = ui.StringField().model
-            self.settings["server"].set_value(default["server"])
-
-        with ui.HStack(height=0, spacing=SPACING):
-            ui.Label("Username:")
-            self.settings["username"] = ui.StringField().model
-            self.settings["username"].set_value(default["username"])
-
-        with ui.HStack(height=0, spacing=SPACING):
-            ui.Label("Password:")
-            self.settings["password"] = ui.StringField(password_mode=True).model
-            self.settings["password"].set_value(default["password"])
-
     def _build_workflow_message_composer(self):
         ui.Button("Get Workflows", clicked_fn=lambda: self._get_workflows())
 
@@ -237,7 +213,7 @@ class Window(ui.Window):
         api_key = self.settings["galaxy_api_key"].get_value_as_string()
 
         self.workflows = get_workflows(server, api_key)
-        self.new_print(f"Workflows: {self.workflows}")
+        self._new_print(f"Workflows: {self.workflows}")
 
     def _get_inputs(self):
         server = self.settings["galaxy_server"].get_value_as_string()
@@ -247,7 +223,7 @@ class Window(ui.Window):
         workflow = self.workflows[workflow_idx]
 
         self.workflow_inputs = get_inputs(server, api_key, workflow)
-        self.new_print(f"Inputs: {self.workflow_inputs}")
+        self._new_print(f"Inputs: {self.workflow_inputs}")
 
     def _get_outputs(self):
         server = self.settings["galaxy_server"].get_value_as_string()
@@ -257,7 +233,7 @@ class Window(ui.Window):
         workflow = self.workflows[workflow_idx]
 
         self.workflow_outputs = get_outputs(server, api_key, workflow)
-        self.new_print(f"Outputs: {self.workflow_outputs}")
+        self._new_print(f"Outputs: {self.workflow_outputs}")
 
     def _launch_workflow(self):
         server = self.settings["galaxy_server"].get_value_as_string()
@@ -272,12 +248,11 @@ class Window(ui.Window):
             value = self.settings["workflow_inputs"][workflow_input].get_value_as_string()
             inputs[workflow_input] = value
 
-        self.new_print(f"Launching workflow {workflow} with inputs {inputs}")
+        self._new_print(f"Launching workflow {workflow} with inputs {inputs}")
         launch_workflow(server, api_key, workflow, inputs)
-        self.new_print("Workflow launched")
+        self._new_print("Workflow launched")
 
-
-    def new_print(self, console_text):
+    def _new_print(self, console_text):
         self.output_prev_commands += f"{console_text}\n"
         self.output_field.set_value(self.output_prev_commands)
         print(console_text)
