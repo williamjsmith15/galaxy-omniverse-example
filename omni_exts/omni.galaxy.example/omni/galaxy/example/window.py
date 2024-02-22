@@ -6,6 +6,7 @@ import os
 import json
 import asyncio
 import uuid
+import shutil
 
 import carb
 import omni.ui as ui
@@ -290,6 +291,6 @@ class Window(ui.Window):
         for file_name in os.listdir(tempdir.name):
             file = tempdir.name + os.sep + file_name
             carb.log_info(f"File: {file}")
-            os.rename(file, data_path + os.sep + uid + os.sep + file_name)
+            shutil.move(file, data_path + os.sep + uid + os.sep + file_name)
 
         tempdir.cleanup()
