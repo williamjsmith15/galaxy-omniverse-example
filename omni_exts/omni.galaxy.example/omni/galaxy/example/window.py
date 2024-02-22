@@ -10,6 +10,8 @@ sys.path.append(api_path)
 
 # import asyncio
 import omni.ui as ui
+import json
+import platform
 
 from .ui_helpers import MinimalModel
 from helper_functs import launch_workflow, get_workflows, get_inputs, get_outputs
@@ -18,12 +20,25 @@ LABEL_WIDTH = 50
 HEIGHT = 300
 SPACING = 4
 
-default = {
-    "galaxy_server": "localhost:8080",
-    "galaxy_api_key": "59974a0f0365840a3440aa3022801cdc",
-    "workflow_idx": 0,
-    "workflow_inputs": {},
-}
+if platform.system() == "Linux":
+    path = "source/extensions/omni.mqtt.parametric/omni/mqtt/parametric/default.json"
+elif platform.system() == "Windows":
+    path = "source\extensions\omni.mqtt.parametric\omni\mqtt\parametric\default.json"
+else:
+    print(f"Error: {platform.system()} not supported")
+    path = ""
+
+if os.path.exists(path):
+    with open(path) as f:
+        default = json.load(f)
+else:
+    default = {
+        "galaxy_server": "localhost:8080",
+        "galaxy_api_key": "",
+        "workflow_idx": 0,
+        "workflow_inputs": {},
+    }
+
 
 collapsible_frames_default = {
     "Server Settings": True,
