@@ -278,10 +278,16 @@ class Window(ui.Window):
         self.output_field.set_value(self.output_prev_commands)
         carb.log_info(console_text)
 
+    def _add_uid(self, uid):
+        uid_file = os.path.join(data_path, "uid.txt")
+        with open(uid_file, "a") as f_write:
+            f_write.write(uid + "\n")
+
     @fire_and_forget
     def _async_launch(self, server, api_key, workflow, inputs):
         uid = str(uuid.uuid4())
         tempdir = launch_workflow(server, api_key, workflow, inputs, uid, True)
+        self._add_uid(uid)
 
         if not os.path.exists(data_path):
             os.mkdir(data_path)
