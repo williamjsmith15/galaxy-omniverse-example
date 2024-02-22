@@ -41,6 +41,7 @@ else:
 
 collapsible_frames_default = {
     "Server Settings": True,
+    "Workflow Message Composer": False,
 }
 
 
@@ -105,9 +106,9 @@ class Window(ui.Window):
             with ui.VStack(height=0, spacing=SPACING):
                 self._build_server_settings()
 
-        with ui.VStack(height=0, spacing=SPACING):
-            ui.Label("Workflow Message Composer", width=self.label_width)
-            self._build_workflow_message_composer()
+        with self._build_frame("Workflow Message Composer"):
+            with ui.VStack(height=0, spacing=SPACING):
+                self._build_workflow_message_composer()
 
         ui.Label("Info", width=self.label_width)
         output_field_string_model = ui.SimpleStringModel("")
