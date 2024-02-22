@@ -5,6 +5,7 @@ import sys
 import os
 import json
 import asyncio
+import uuid
 
 import carb
 import omni.ui as ui
@@ -12,6 +13,7 @@ import omni.ui as ui
 current_path = os.path.dirname(os.path.abspath(__file__))
 parent_path = current_path.split('omni_exts')[0]
 api_path = os.path.join(parent_path, "galaxy-api")
+data_path = os.path.join(parent_path, "omni-data")
 sys.path.append(api_path)
 
 from helper_functs import launch_workflow, get_workflows, get_inputs, get_outputs
@@ -276,4 +278,17 @@ class Window(ui.Window):
 
     @fire_and_forget
     def _async_launch(self, server, api_key, workflow, inputs):
-        launch_workflow(server, api_key, workflow, inputs)
+        uid = str(uuid.uuid4())
+        tempdir = launch_workflow(server, api_key, workflow, inputs, uid, True)
+
+        if not os.path.exists(data_path):
+            os.mkdir(data_path)
+
+        os.mkdir(data_path + os.sep + uid)
+
+        for file_name in os.listdir(tempdir.name):
+            file = tempdir.name + os.sep + file_name
+            carb.log_info(f"File: {file}")
+            os.rename(file, data_path + os.sep + uid + os.sep + file_name)
+
+        tempdir.cleanup()

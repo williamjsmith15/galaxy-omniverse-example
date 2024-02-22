@@ -1,4 +1,7 @@
 import uuid
+import os
+import json
+import tempfile
 import logging as log
 
 from os import remove
@@ -28,6 +31,7 @@ def new_upload(gi, history, name, string):
     remove(name)
     return upload
 
+
 def check_server_api(server, api_key):
     """
     Function to check if the provided API key and server address are valid
@@ -56,6 +60,7 @@ def check_server_api(server, api_key):
 
     return True
 
+
 def check_workflow(server, api_key, workflow_name):
     """
     Function to check if the workflow that is being referenced is part of
@@ -80,7 +85,14 @@ def check_workflow(server, api_key, workflow_name):
         return True
 
 
-def launch_workflow(server, api_key, workflow_name, inputs):
+def launch_workflow(
+    server,
+    api_key,
+    workflow_name,
+    inputs,
+    uid=None,
+    from_omni=False
+):
     """
     Function to call galaxy workflow via API
 
@@ -92,6 +104,9 @@ def launch_workflow(server, api_key, workflow_name, inputs):
         inputs (dict): Dictionary of inputs for the workflow, these should
             be named the same as the inputs in the workflow
             format: {input_name: input_string/filename, ...}
+        uid (string): Unique identifier for the workflow run
+        from_omni (bool): If true, the function will save the files to a
+            location where they can be accessed by the omniverse extension
 
     Returns:
         True if workflow successfully launched
@@ -101,27 +116,37 @@ def launch_workflow(server, api_key, workflow_name, inputs):
     if not check_server_api(server=server, api_key=api_key):
         return False
     # Check workflow is accessible / exists
-    if not check_workflow(server=server, api_key=api_key, workflow_name=workflow_name):
+    if not check_workflow(
+        server=server,
+        api_key=api_key,
+        workflow_name=workflow_name
+    ):
         return False
 
-    expected_inputs = get_inputs(server=server, api_key=api_key, workflow_name=workflow_name)
+    expected_inputs = get_inputs(
+                                server=server,
+                                api_key=api_key,
+                                workflow_name=workflow_name
+                            )
 
     gi = GalaxyInstance(url=server, key=api_key)
 
     # Create new history with name history_name
-    uid = str(uuid.uuid4())
+    if uid is None:
+        uid = str(uuid.uuid4())
+
     new_hist = gi.histories.create_history(name=workflow_name + '_' + uid)
 
     # Upload files and parameters to the history
     workflow_inputs = {}
 
-    # Setup Inputs for the workflow
-    for input in expected_inputs:
+    # Setup wf_inputs for the workflow
+    for wf_input in expected_inputs:
 
-        if input[0] == "dataset":
+        if wf_input[0] == "dataset":
             uploads = []
             for name, string in inputs.items():
-                if input[1] != name:
+                if wf_input[1] != name:
                     continue
                 # Check for case of input being a file or a string
                 if path.isfile(string):
@@ -134,14 +159,14 @@ def launch_workflow(server, api_key, workflow_name, inputs):
                     uploads.append(
                         new_upload(gi, new_hist['id'], name, string)
                     )
-            workflow_inputs[str(input[2])] = {
+            workflow_inputs[str(wf_input[2])] = {
                 'src': 'hda',
                 'id': uploads[-1]['outputs'][0]['id']
             }
-        elif input[0] == "parameter":
+        elif wf_input[0] == "parameter":
             for name, string in inputs.items():
-                if input[1] == name:
-                    workflow_inputs[str(input[2])] = string
+                if wf_input[1] == name:
+                    workflow_inputs[str(wf_input[2])] = string
 
     # Get list of workflows, searching for workflow with name workflow_name
     api_workflow = gi.workflows.get_workflows(name=workflow_name)
@@ -166,7 +191,31 @@ def launch_workflow(server, api_key, workflow_name, inputs):
     invocation_id = invocation_workflow[0]['id']
     gi.invocations.wait_for_invocation(invocation_id=invocation_id)
 
-    return True
+    # Find the job created by the invocation
+    job = gi.jobs.get_jobs(invocation_id=invocation_id)
+    # Wait for this job to finish
+    gi.jobs.wait_for_job(job_id=job[0]['id'])
+
+    # From omniverse we want to save files in a location where we can access
+    # Pull all the files from the history and save them to a temp location
+    if from_omni:
+        tempdir = tempfile.TemporaryDirectory()
+        for dataset in gi.datasets.get_datasets(history_id=new_hist['id']):
+            download = gi.datasets.download_dataset(
+                file_path=tempdir.name,
+                dataset_id=dataset['id'],
+                use_default_filename=True
+            )
+        download = gi.invocations.get_invocation_biocompute_object(
+            invocation_id=invocation_workflow[0]['id']
+        )
+        dict_to_save = json.dumps(download)
+        bco_fname = tempdir.name + os.sep + 'biocompute_object.json'
+        with open(bco_fname, 'w') as f_write:
+            f_write.write(dict_to_save)
+
+        gi.histories.delete_history(history_id=new_hist['id'])
+        return tempdir
 
 
 def get_inputs(server, api_key, workflow_name):
@@ -181,14 +230,18 @@ def get_inputs(server, api_key, workflow_name):
 
     Returns:
         inputs (array of strings): Input files expected by the workflow, these
-            will be in the same order as they should be given in the main API call
+            will be in the same order as they should be given in the main call
             format: [(type, name, id), ...]
     """
     # Check server and api key are valid
     if not check_server_api(server=server, api_key=api_key):
         return False
     # Check workflow exists
-    if not check_workflow(server=server, api_key=api_key, workflow_name=workflow_name):
+    if not check_workflow(
+        server=server,
+        api_key=api_key,
+        workflow_name=workflow_name
+    ):
         return False
 
     gi = GalaxyInstance(url=server, key=api_key)
@@ -202,14 +255,14 @@ def get_inputs(server, api_key, workflow_name):
         # Some of the steps don't take inputs so have to skip these
         # And only pull the inputs from input datasets, not individual tools
         if len(inputs) > 0 and name == "Input dataset":
-            for input in inputs:
+            for wf_input in inputs:
                 input_array.append(
-                    ('dataset', input['name'], steps[step]['id'])
+                    ('dataset', wf_input['name'], steps[step]['id'])
                 )
         if len(inputs) > 0 and name == "Input parameter":
-            for input in inputs:
+            for wf_input in inputs:
                 input_array.append(
-                    ('parameter', input['name'], steps[step]['id'])
+                    ('parameter', wf_input['name'], steps[step]['id'])
                 )
 
     return input_array
@@ -232,7 +285,11 @@ def get_outputs(server, api_key, workflow_name):
     # Check server and api key are valid
     if not check_server_api(server=server, api_key=api_key):
         return False
-    if not check_workflow(server=server, api_key=api_key, workflow_name=workflow_name):
+    if not check_workflow(
+        server=server,
+        api_key=api_key,
+        workflow_name=workflow_name
+    ):
         return False
 
     gi = GalaxyInstance(url=server, key=api_key)
