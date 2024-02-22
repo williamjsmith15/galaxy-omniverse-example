@@ -14,6 +14,8 @@ class OMNIGALAXY(omni.ext.IExt):
     WINDOW_NAME = "Galaxy Workflow API"
     MENU_PATH = f"Window/{WINDOW_NAME}"
 
+    _window = None
+
     def on_startup(self):
         # The ability to show up the window if the system requires it. We use it
         # in QuickLayout.

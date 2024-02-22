@@ -11,7 +11,7 @@ sys.path.append(api_path)
 # import asyncio
 import omni.ui as ui
 import json
-import platform
+import carb
 
 from .ui_helpers import MinimalModel
 from helper_functs import launch_workflow, get_workflows, get_inputs, get_outputs
@@ -20,18 +20,14 @@ LABEL_WIDTH = 50
 HEIGHT = 300
 SPACING = 4
 
-if platform.system() == "Linux":
-    path = "source/extensions/omni.mqtt.parametric/omni/mqtt/parametric/default.json"
-elif platform.system() == "Windows":
-    path = "source\extensions\omni.mqtt.parametric\omni\mqtt\parametric\default.json"
-else:
-    print(f"Error: {platform.system()} not supported")
-    path = ""
+path = os.path.join(current_path, "default.json")
 
 if os.path.exists(path):
+    carb.log_info(f"Loading default settings from {path}")
     with open(path) as f:
         default = json.load(f)
 else:
+    carb.log_info(f"Could not find {path}, using hardcoded defaults")
     default = {
         "galaxy_server": "localhost:8080",
         "galaxy_api_key": "",
@@ -81,7 +77,7 @@ class Window(ui.Window):
         self.frame.set_build_fn(self._build_fn)
 
     def destroy(self):
-        self._stop_listener()
+        # self._stop_listener()
         # It will destroy all the children
         super().destroy()
 
@@ -264,7 +260,7 @@ class Window(ui.Window):
 
         workflow_idx = self.settings["workflow_idx"].get_item_value_model(None, 1).get_value_as_int()
         workflow = self.workflows[workflow_idx]
-
+        print(self.workflow_inputs)
         for workflow_input in self.workflow_inputs:
             print(workflow_input)
             print(self.settings["workflow_inputs"][workflow_input].get_value_as_string())
