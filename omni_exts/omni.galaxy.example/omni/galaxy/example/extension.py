@@ -1,12 +1,13 @@
 __all__ = ["OMNIGALAXY"]
 
-from .window import Window
 from functools import partial
 import asyncio
+
 import omni.ext
 import omni.kit.ui
 import omni.ui as ui
 
+from .window import Window
 
 
 class OMNIGALAXY(omni.ext.IExt):
@@ -15,11 +16,15 @@ class OMNIGALAXY(omni.ext.IExt):
     MENU_PATH = f"Window/{WINDOW_NAME}"
 
     _window = None
+    _menu = None
 
     def on_startup(self):
-        # The ability to show up the window if the system requires it. We use it
-        # in QuickLayout.
-        ui.Workspace.set_show_window_fn(OMNIGALAXY.WINDOW_NAME, partial(self.show_window, None))
+        ''' The ability to show up the window if the system requires it
+        We use it in QuickLayout. '''
+        ui.Workspace.set_show_window_fn(
+            OMNIGALAXY.WINDOW_NAME,
+            partial(self.show_window, None)
+        )
 
         # Put the new menu
         editor_menu = omni.kit.ui.get_editor_menu()
@@ -35,6 +40,7 @@ class OMNIGALAXY(omni.ext.IExt):
             ui.Button("Refresh", clicked_fn=lambda: OMNIGALAXY.show_window())
 
     def on_shutdown(self):
+        '''Shutdown the window and remove the menu item.'''
         self._menu = None
         if self._window:
             self._window.destroy()
