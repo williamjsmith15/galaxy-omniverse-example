@@ -12,6 +12,7 @@ sys.path.append(api_path)
 import omni.ui as ui
 import json
 import carb
+import asyncio
 
 from .ui_helpers import MinimalModel
 from helper_functs import launch_workflow, get_workflows, get_inputs, get_outputs
@@ -42,12 +43,10 @@ collapsible_frames_default = {
 
 
 
-# def fire_and_forget(f):
-#     def wrapped(*args, **kwargs):
-#         foo = asyncio.get_event_loop().run_in_executor(None, f, *args, *kwargs)
-#         return foo
-#         # return loop.run_in_executor(None, f, *args, *kwargs)
-#     return wrapped
+def fire_and_forget(f):
+    def wrapped(*args, **kwargs):
+        return asyncio.get_event_loop().run_in_executor(None, f, *args, *kwargs)
+    return wrapped
 
 
 class Window(ui.Window):
@@ -136,7 +135,7 @@ class Window(ui.Window):
                     try:
                         default[key][sub_key] = sub_value.get_value_as_string()
                     except AttributeError:
-                        print(
+                        carb.log_error(
                             f"""Error with key {key}, subkey {sub_key}.
                             No dict written yet for this: {AttributeError}"""
                         )
@@ -145,10 +144,10 @@ class Window(ui.Window):
                     temp = value.get_item_value_model(None, 1)
                     default[key] = temp.get_value_as_int()
                 except AttributeError:
-                    print(f"Error with key {key}: {AttributeError}")
+                    carb.log_error(f"Error with key {key}: {AttributeError}")
                 except Exception:
-                    print(f"Error: {Exception}")
-                    print(f"Don't know how to handle {key}")
+                    carb.log_error(f"Error: {Exception}")
+                    carb.log_error(f"Don't know how to handle {key}")
 
     def _build_server_settings(self):
         ui.Label("Galaxy Server Settings", width=self.label_width)
@@ -267,10 +266,14 @@ class Window(ui.Window):
             inputs[input_name] = value
 
         self._new_print(f"Launching workflow {workflow} with inputs {inputs}")
-        launch_workflow(server, api_key, workflow, inputs)
+        self._async_launch(server, api_key, workflow, inputs)
         self._new_print("Workflow launched")
 
     def _new_print(self, console_text):
         self.output_prev_commands += f"{console_text}\n"
         self.output_field.set_value(self.output_prev_commands)
         carb.log_info(console_text)
+
+    @fire_and_forget
+    def _async_launch(self, server, api_key, workflow, inputs):
+        launch_workflow(server, api_key, workflow, inputs)
