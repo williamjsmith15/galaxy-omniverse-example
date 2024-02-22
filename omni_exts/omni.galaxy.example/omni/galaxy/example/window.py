@@ -3,19 +3,19 @@ __all__ = ["Window"]
 # Add the api helper functions to the python path
 import sys
 import os
+import json
+import asyncio
+
+import carb
+import omni.ui as ui
+
 current_path = os.path.dirname(os.path.abspath(__file__))
 parent_path = current_path.split('omni_exts')[0]
 api_path = os.path.join(parent_path, "galaxy-api")
 sys.path.append(api_path)
 
-# import asyncio
-import omni.ui as ui
-import json
-import carb
-import asyncio
-
-from .ui_helpers import MinimalModel
 from helper_functs import launch_workflow, get_workflows, get_inputs, get_outputs
+from .ui_helpers import MinimalModel
 
 LABEL_WIDTH = 50
 HEIGHT = 300
@@ -25,8 +25,8 @@ path = os.path.join(current_path, "default.json")
 
 if os.path.exists(path):
     carb.log_info(f"Loading default settings from {path}")
-    with open(path) as f:
-        default = json.load(f)
+    with open(path) as f_read:
+        default = json.load(f_read)
 else:
     carb.log_info(f"Could not find {path}, using hardcoded defaults")
     default = {
@@ -42,8 +42,8 @@ collapsible_frames_default = {
 }
 
 
-
 def fire_and_forget(f):
+    '''To wrap a function for a fire and forget call.'''
     def wrapped(*args, **kwargs):
         return asyncio.get_event_loop().run_in_executor(None, f, *args, *kwargs)
     return wrapped
@@ -76,7 +76,7 @@ class Window(ui.Window):
         self.frame.set_build_fn(self._build_fn)
 
     def destroy(self):
-        # It will destroy all the children
+        '''It will destroy all the children'''
         super().destroy()
 
     @property
@@ -177,7 +177,8 @@ class Window(ui.Window):
                     ui.Label(name)
                     ui.Label(input_type)
                     if input_type == "dataset":
-                        ui.Label("Need to implement this into the extension, file selector, upload to minio allow pull from minio on listener end")
+                        # File selector, alllow local files to be selected
+                        ui.Label("Yet to be implemented")
                     else:
                         if name == "password":
                             self.settings["workflow_inputs"][name] = ui.StringField(password_mode=True).model
