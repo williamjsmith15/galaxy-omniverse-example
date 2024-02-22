@@ -260,12 +260,11 @@ class Window(ui.Window):
 
         workflow_idx = self.settings["workflow_idx"].get_item_value_model(None, 1).get_value_as_int()
         workflow = self.workflows[workflow_idx]
-        print(self.workflow_inputs)
+
         for workflow_input in self.workflow_inputs:
-            print(workflow_input)
-            print(self.settings["workflow_inputs"][workflow_input].get_value_as_string())
-            value = self.settings["workflow_inputs"][workflow_input].get_value_as_string()
-            inputs[workflow_input] = value
+            input_name = workflow_input[1]
+            value = self.settings["workflow_inputs"][input_name].get_value_as_string()
+            inputs[input_name] = value
 
         self._new_print(f"Launching workflow {workflow} with inputs {inputs}")
         launch_workflow(server, api_key, workflow, inputs)
@@ -274,4 +273,4 @@ class Window(ui.Window):
     def _new_print(self, console_text):
         self.output_prev_commands += f"{console_text}\n"
         self.output_field.set_value(self.output_prev_commands)
-        print(console_text)
+        carb.log_info(console_text)
