@@ -76,7 +76,6 @@ class Window(ui.Window):
         self.frame.set_build_fn(self._build_fn)
 
     def destroy(self):
-        # self._stop_listener()
         # It will destroy all the children
         super().destroy()
 
@@ -115,9 +114,6 @@ class Window(ui.Window):
             height=HEIGHT,
             multiline=True).model
         self.output_field.set_value(self.output_prev_commands)
-
-        ui.Button("Refresh Screen", clicked_fn=lambda: self._refresh_screen())
-        ui.Button("Stop Listener", clicked_fn=lambda: self._stop_listener())
 
         self.initial_build = False
 
@@ -229,6 +225,7 @@ class Window(ui.Window):
 
         self.workflows = get_workflows(server, api_key)
         self._new_print(f"Workflows: {self.workflows}")
+        self._refresh_screen()
 
     def _get_inputs(self):
         server = self.settings["galaxy_server"].get_value_as_string()
@@ -240,6 +237,7 @@ class Window(ui.Window):
         for input_type, name, idx in get_inputs(server, api_key, workflow):
             self.workflow_inputs.append((input_type, name))
         self._new_print(f"Inputs: {self.workflow_inputs}")
+        self._refresh_screen()
 
     def _get_outputs(self):
         server = self.settings["galaxy_server"].get_value_as_string()
@@ -250,6 +248,7 @@ class Window(ui.Window):
 
         self.workflow_outputs = get_outputs(server, api_key, workflow)
         self._new_print(f"Outputs: {self.workflow_outputs}")
+        self._refresh_screen()
 
     def _launch_workflow(self):
         server = self.settings["galaxy_server"].get_value_as_string()
