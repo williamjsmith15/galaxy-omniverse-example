@@ -107,7 +107,7 @@ class Window(ui.Window):
     # --- BUILD FRAMES & FUNCTIONS ---
     ##################################
 
-    def _build_API(self):
+    def _build_main(self):
         if not self.initial_build:
             self._write_settings()
 
@@ -207,14 +207,16 @@ class Window(ui.Window):
                 ui.Label(input_type)
                 if input_type == "dataset":
                     # File selector, alllow local files to be selected
-                    ui.Label("Yet to be implemented")
+                    carb.log_warn("Datasets are yet to be implemented")
+                elif input_type == "parameter":
+                    self.settings["workflow_inputs"][name] = ui.StringField().model
+
+                    default_inputs = default["workflow_inputs"]
+                    if name in default_inputs:
+                        self.settings["workflow_inputs"][name].set_value(default_inputs[name])
                 else:
-                    if name == "password":
-                        self.settings["workflow_inputs"][name] = ui.StringField(password_mode=True).model
-                    else:
-                        self.settings["workflow_inputs"][name] = ui.StringField().model
-                    if name in default["workflow_inputs"].keys():
-                        self.settings["workflow_inputs"][name].set_value(default["workflow_inputs"][name])
+                    carb.log_error(f"Unknown input type {input_type}")
+
         # Only want launch_workflow when we have the inputs
         ui.Button("Launch Workflow", clicked_fn=lambda: self._launch_workflow())
 
@@ -241,8 +243,8 @@ class Window(ui.Window):
         ui.ComboBox(self.settings["selected_file_idx"])
 
         ui.Button("Pull File", clicked_fn=lambda: self._pull_file(
-            self.folders[self.settings["selected_folder_idx"].get_item_value_model(None, 1).get_value_as_int()],
-            self.files[self.settings["selected_file_idx"].get_item_value_model(None, 1).get_value_as_int()]
+            self.settings["selected_folder_idx"].get_item_value_model(None, 1).get_value_as_int(),
+            self.settings["selected_file_idx"].get_item_value_model(None, 1).get_value_as_int()
         ))
 
     def _build_warning(self):
@@ -265,7 +267,7 @@ class Window(ui.Window):
         """
         with ui.ScrollingFrame():
             with ui.VStack(height=0):
-                self._build_API()
+                self._build_main()
 
     ##########################
     # --- BUTTONS ---
@@ -295,8 +297,8 @@ class Window(ui.Window):
         server = self.settings["galaxy_server"].get_value_as_string()
         api_key = self.settings["galaxy_api_key"].get_value_as_string()
 
-        workflow_idx = self.settings["workflow_idx"].get_item_value_model(None, 1).get_value_as_int()
-        workflow = self.workflows[workflow_idx]
+        wf_idx = self.settings["workflow_idx"].get_item_value_model(None, 1).get_value_as_int()
+        workflow = self.workflows[wf_idx]
 
         for input_type, name, idx in get_inputs(server, api_key, workflow):
             self.workflow_inputs.append((input_type, name))
@@ -307,8 +309,8 @@ class Window(ui.Window):
         server = self.settings["galaxy_server"].get_value_as_string()
         api_key = self.settings["galaxy_api_key"].get_value_as_string()
 
-        workflow_idx = self.settings["workflow_idx"].get_item_value_model(None, 1).get_value_as_int()
-        workflow = self.workflows[workflow_idx]
+        wf_idx = self.settings["workflow_idx"].get_item_value_model(None, 1).get_value_as_int()
+        workflow = self.workflows[wf_idx]
 
         self.workflow_outputs = get_outputs(server, api_key, workflow)
         self._new_print(f"Outputs: {self.workflow_outputs}")
@@ -320,8 +322,8 @@ class Window(ui.Window):
 
         inputs = {}
 
-        workflow_idx = self.settings["workflow_idx"].get_item_value_model(None, 1).get_value_as_int()
-        workflow = self.workflows[workflow_idx]
+        wf_idx = self.settings["workflow_idx"].get_item_value_model(None, 1).get_value_as_int()
+        workflow = self.workflows[wf_idx]
 
         for workflow_input in self.workflow_inputs:
             input_name = workflow_input[1]
@@ -351,7 +353,10 @@ class Window(ui.Window):
         for file in os.listdir(data_path + os.sep + uid):
             self.files.append(file)
 
-    def _pull_file(self, uid, file):
+    def _pull_file(self, uid_idx, file_idx):
+        uid = self.folders[uid_idx]
+        file = self.files[file_idx]
+
         carb.log_info(f"Pulling {file} from {uid}")
         file_path = data_path + os.sep + uid + os.sep + file
         if not os.path.exists(file_path):
