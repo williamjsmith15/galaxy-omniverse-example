@@ -7,7 +7,7 @@ import json
 import asyncio
 import uuid
 import shutil
-
+from pprint import pprint
 import carb
 import omni.ui as ui
 
@@ -37,6 +37,8 @@ else:
         "galaxy_api_key": "",
         "workflow_idx": 0,
         "workflow_inputs": {},
+        "selected_folder_idx": 0,
+        "selected_file_idx": 0,
     }
 
 
@@ -64,6 +66,10 @@ class Window(ui.Window):
     workflows = []
     workflow_inputs = []
     workflow_outputs = []
+
+    # Initialise the lists that hold the folders and files
+    folders = []
+    files = []
 
     initial_build = True
 
@@ -278,16 +284,41 @@ class Window(ui.Window):
         self.output_field.set_value(self.output_prev_commands)
         carb.log_info(console_text)
 
-    def _add_uid(self, uid):
-        uid_file = os.path.join(data_path, "uid.txt")
-        with open(uid_file, "a") as f_write:
-            f_write.write(uid + "\n")
+    def _get_folders(self):
+        for uid in os.listdir(data_path):
+            self.folders.append(uid)
+
+    def _get_files(self, uid):
+        for file in os.listdir(data_path + os.sep + uid):
+            self.files.append(file)
+
+    def _pull_file(self, uid, file):
+        carb.log_info(f"Pulling {file} from {uid}")
+        file_path = data_path + os.sep + uid + os.sep + file
+        if not os.path.exists(file_path):
+            carb.log_error(f"File {file} does not exist in {uid}")
+            return
+        ext = os.path.splitext(file_path)[-1]
+        if ext == ".json":
+            with open(file_path) as f_read:
+                data = json.load(f_read)
+                pprint(data)
+                self._new_print(f"File {file} from {uid}:\n{data}")
+        elif ext == ".txt":
+            with open(file_path) as f_read:
+                data = f_read.read()
+                self._new_print(f"File {file} from {uid}:\n{data}")
+        elif 'usd' in ext:
+            carb.log_info(f"Opening {file_path}")
+            carb.log_error("USD File IO not yet implemented")
+        else:
+            carb.log_error(f"File type {ext} not yet implemented")
+            
 
     @fire_and_forget
     def _async_launch(self, server, api_key, workflow, inputs):
         uid = str(uuid.uuid4())
         tempdir = launch_workflow(server, api_key, workflow, inputs, uid, True)
-        self._add_uid(uid)
 
         if not os.path.exists(data_path):
             os.mkdir(data_path)
