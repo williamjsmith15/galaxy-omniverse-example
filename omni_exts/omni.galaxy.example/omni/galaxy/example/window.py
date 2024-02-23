@@ -8,8 +8,10 @@ import asyncio
 import uuid
 import shutil
 
-import carb
-import omni.ui as ui
+import carb # pylint: disable=import-error
+import omni.ui as ui # pylint: disable=import-error
+
+from .ui_helpers import MinimalModel
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 parent_path = current_path.split('omni_exts')[0]
@@ -17,8 +19,7 @@ api_path = os.path.join(parent_path, "galaxy-api")
 data_path = os.path.join(parent_path, "omni-data")
 sys.path.append(api_path)
 
-from helper_functs import launch_workflow, get_workflows, get_inputs, get_outputs
-from .ui_helpers import MinimalModel
+from helper_functs import launch_workflow, get_workflows, get_inputs, get_outputs # pylint: disable=import-error
 
 LABEL_WIDTH = 50
 HEIGHT = 300
@@ -184,34 +185,38 @@ class Window(ui.Window):
     def _build_workflow_message_composer(self):
         ui.Button("Get Workflows", clicked_fn=lambda: self._get_workflows())
 
-        if len(self.workflows) > 0:
-            ui.Label("Workflows:")
-            self.settings["workflow_idx"] = MinimalModel(self.workflows)
-            self.settings["workflow_idx"].set_model_state(default["workflow_idx"])
-            ui.ComboBox(self.settings["workflow_idx"])
+        if not len(self.workflows) > 0:
+            return
 
-            # Only want get_inputs when we have the workflows
-            ui.Button("Get Inputs", clicked_fn=lambda: self._get_inputs())
+        ui.Label("Workflows:")
+        self.settings["workflow_idx"] = MinimalModel(self.workflows)
+        self.settings["workflow_idx"].set_model_state(default["workflow_idx"])
+        ui.ComboBox(self.settings["workflow_idx"])
 
-        if len(self.workflow_inputs) > 0 and len(self.workflows) > 0:
-            ui.Label("Inputs:")
-            self.settings["workflow_inputs"] = {}
-            for input_type, name in self.workflow_inputs:
-                with ui.HStack(height=0, spacing=SPACING):
-                    ui.Label(name)
-                    ui.Label(input_type)
-                    if input_type == "dataset":
-                        # File selector, alllow local files to be selected
-                        ui.Label("Yet to be implemented")
+        # Only want get_inputs when we have the workflows
+        ui.Button("Get Inputs", clicked_fn=lambda: self._get_inputs())
+
+        if not len(self.workflows) > 0:
+            return
+
+        ui.Label("Inputs:")
+        self.settings["workflow_inputs"] = {}
+        for input_type, name in self.workflow_inputs:
+            with ui.HStack(height=0, spacing=SPACING):
+                ui.Label(name)
+                ui.Label(input_type)
+                if input_type == "dataset":
+                    # File selector, alllow local files to be selected
+                    ui.Label("Yet to be implemented")
+                else:
+                    if name == "password":
+                        self.settings["workflow_inputs"][name] = ui.StringField(password_mode=True).model
                     else:
-                        if name == "password":
-                            self.settings["workflow_inputs"][name] = ui.StringField(password_mode=True).model
-                        else:
-                            self.settings["workflow_inputs"][name] = ui.StringField().model
-                        if name in default["workflow_inputs"].keys():
-                            self.settings["workflow_inputs"][name].set_value(default["workflow_inputs"][name])
-            # Only want launch_workflow when we have the inputs
-            ui.Button("Launch Workflow", clicked_fn=lambda: self._launch_workflow())
+                        self.settings["workflow_inputs"][name] = ui.StringField().model
+                    if name in default["workflow_inputs"].keys():
+                        self.settings["workflow_inputs"][name].set_value(default["workflow_inputs"][name])
+        # Only want launch_workflow when we have the inputs
+        ui.Button("Launch Workflow", clicked_fn=lambda: self._launch_workflow())
 
     def _build_file_manager(self):
         self._get_folders()
@@ -241,7 +246,10 @@ class Window(ui.Window):
         ))
 
     def _build_warning(self):
-        ui.Label("WARNING - This will clear all local simulation data - use with caution!", width=self.label_width)
+        ui.Label(
+            "WARNING - This will clear all local simulation data - use with caution!",
+            width=self.label_width
+        )
         ui.Button("Clear Local Data", clicked_fn=lambda: self._clear_local_data())
 
     def _build_frame(self, frame_name):
