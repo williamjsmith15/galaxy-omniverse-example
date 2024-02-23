@@ -7,7 +7,7 @@ import json
 import asyncio
 import uuid
 import shutil
-from pprint import pprint
+
 import carb
 import omni.ui as ui
 
@@ -45,6 +45,7 @@ else:
 collapsible_frames_default = {
     "Server Settings": True,
     "Workflow Message Composer": False,
+    "File Manager": True,
 }
 
 
@@ -117,6 +118,12 @@ class Window(ui.Window):
             with ui.VStack(height=0, spacing=SPACING):
                 self._build_workflow_message_composer()
 
+        with self._build_frame("File Manager"):
+            with ui.VStack(height=0, spacing=SPACING):
+                self._build_file_manager()
+
+        ui.Button("Refresh", clicked_fn=lambda: self._refresh_screen())
+
         ui.Label("Info", width=self.label_width)
         output_field_string_model = ui.SimpleStringModel("")
         self.output_field = ui.StringField(
@@ -124,6 +131,8 @@ class Window(ui.Window):
             height=HEIGHT,
             multiline=True).model
         self.output_field.set_value(self.output_prev_commands)
+
+        ui.Button("Clear", clicked_fn=lambda: self._clear_print())
 
         self.initial_build = False
 
@@ -198,6 +207,33 @@ class Window(ui.Window):
                             self.settings["workflow_inputs"][name].set_value(default["workflow_inputs"][name])
             # Only want launch_workflow when we have the inputs
             ui.Button("Launch Workflow", clicked_fn=lambda: self._launch_workflow())
+
+    def _build_file_manager(self):
+        self._get_folders()
+        carb.log_info(f"Folders: {self.folders}")
+
+        if len(self.folders) == 0:
+            return
+
+        ui.Label("Folders:")
+        self.settings["selected_folder_idx"] = MinimalModel(self.folders)
+        self.settings["selected_folder_idx"].set_model_state(default["selected_folder_idx"])
+        ui.ComboBox(self.settings["selected_folder_idx"])
+
+        self._get_files(self.folders[default["selected_folder_idx"]])
+        carb.log_info(f"Files: {self.files}")
+
+        if len(self.files) == 0:
+            return
+        ui.Label("Files:")
+        self.settings["selected_file_idx"] = MinimalModel(self.files)
+        self.settings["selected_file_idx"].set_model_state(default["selected_file_idx"])
+        ui.ComboBox(self.settings["selected_file_idx"])
+
+        ui.Button("Pull File", clicked_fn=lambda: self._pull_file(
+            self.folders[self.settings["selected_folder_idx"].get_item_value_model(None, 1).get_value_as_int()],
+            self.files[self.settings["selected_file_idx"].get_item_value_model(None, 1).get_value_as_int()]
+        ))
 
     def _build_frame(self, frame_name):
         """To Build a Collapsable Frame"""
@@ -284,11 +320,17 @@ class Window(ui.Window):
         self.output_field.set_value(self.output_prev_commands)
         carb.log_info(console_text)
 
+    def _clear_print(self):
+        self.output_prev_commands = ""
+        self.output_field.set_value(self.output_prev_commands)
+
     def _get_folders(self):
+        self.folders = []
         for uid in os.listdir(data_path):
             self.folders.append(uid)
 
     def _get_files(self, uid):
+        self.files = []
         for file in os.listdir(data_path + os.sep + uid):
             self.files.append(file)
 
@@ -302,8 +344,8 @@ class Window(ui.Window):
         if ext == ".json":
             with open(file_path) as f_read:
                 data = json.load(f_read)
-                pprint(data)
-                self._new_print(f"File {file} from {uid}:\n{data}")
+                nice_string = json.dumps(data, indent=4)
+                self._new_print(f"File {file} from {uid}:\n{nice_string}")
         elif ext == ".txt":
             with open(file_path) as f_read:
                 data = f_read.read()
@@ -313,7 +355,6 @@ class Window(ui.Window):
             carb.log_error("USD File IO not yet implemented")
         else:
             carb.log_error(f"File type {ext} not yet implemented")
-            
 
     @fire_and_forget
     def _async_launch(self, server, api_key, workflow, inputs):
