@@ -46,6 +46,7 @@ collapsible_frames_default = {
     "Server Settings": True,
     "Workflow Message Composer": False,
     "File Manager": True,
+    "WARNING": True,
 }
 
 
@@ -133,6 +134,10 @@ class Window(ui.Window):
         self.output_field.set_value(self.output_prev_commands)
 
         ui.Button("Clear", clicked_fn=lambda: self._clear_print())
+
+        with self._build_frame("WARNING"):
+            with ui.VStack(height=0, spacing=SPACING):
+                self._build_warning()
 
         self.initial_build = False
 
@@ -234,6 +239,10 @@ class Window(ui.Window):
             self.folders[self.settings["selected_folder_idx"].get_item_value_model(None, 1).get_value_as_int()],
             self.files[self.settings["selected_file_idx"].get_item_value_model(None, 1).get_value_as_int()]
         ))
+
+    def _build_warning(self):
+        ui.Label("WARNING - This will clear all local simulation data - use with caution!", width=self.label_width)
+        ui.Button("Clear Local Data", clicked_fn=lambda: self._clear_local_data())
 
     def _build_frame(self, frame_name):
         """To Build a Collapsable Frame"""
@@ -355,6 +364,10 @@ class Window(ui.Window):
             carb.log_error("USD File IO not yet implemented")
         else:
             carb.log_error(f"File type {ext} not yet implemented")
+
+    def _clear_local_data(self):
+        for uid in os.listdir(data_path):
+            shutil.rmtree(data_path + os.sep + uid)
 
     @fire_and_forget
     def _async_launch(self, server, api_key, workflow, inputs):
