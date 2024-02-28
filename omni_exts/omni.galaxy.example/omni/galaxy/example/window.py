@@ -300,7 +300,9 @@ class Window(ui.Window):
         wf_idx = self.settings["workflow_idx"].get_item_value_model(None, 1).get_value_as_int()
         workflow = self.workflows[wf_idx]
 
-        for input_type, name, idx in get_inputs(server, api_key, workflow):
+        self.workflow_inputs = []
+
+        for input_type, name in get_inputs(server, api_key, workflow):
             self.workflow_inputs.append((input_type, name))
         self._new_print(f"Inputs: {self.workflow_inputs}")
         self._refresh_screen()
