@@ -7,10 +7,12 @@ import json
 import asyncio
 import uuid
 import shutil
+from typing import List
 
-import carb # pylint: disable=import-error
-import omni.ui as ui # pylint: disable=import-error
 
+import carb  # pylint: disable=import-error
+import omni.ui as ui  # pylint: disable=import-error
+from omni.kit.window.file_importer import get_file_importer  # pylint: disable=import-error
 from .ui_helpers import MinimalModel
 
 current_path = os.path.dirname(os.path.abspath(__file__))
@@ -40,6 +42,7 @@ else:
         "workflow_inputs": {},
         "selected_folder_idx": 0,
         "selected_file_idx": 0,
+        "local_file_selector": 0,
     }
 
 
@@ -73,6 +76,8 @@ class Window(ui.Window):
     # Initialise the lists that hold the folders and files
     folders = []
     files = []
+
+    dataset_input_names = []
 
     initial_build = True
 
@@ -201,21 +206,35 @@ class Window(ui.Window):
 
         ui.Label("Inputs:")
         self.settings["workflow_inputs"] = {}
+        default_inputs = default["workflow_inputs"]
+        self.dataset_input_names = []
+
         for input_type, name in self.workflow_inputs:
             with ui.HStack(height=0, spacing=SPACING):
                 ui.Label(name)
-                ui.Label(input_type)
                 if input_type == "dataset":
-                    # File selector, alllow local files to be selected
-                    carb.log_warn("Datasets are yet to be implemented")
-                elif input_type == "parameter":
+                    # File selector, allow local files to be selected
                     self.settings["workflow_inputs"][name] = ui.StringField().model
-
-                    default_inputs = default["workflow_inputs"]
+                    self.dataset_input_names.append(name)
                     if name in default_inputs:
                         self.settings["workflow_inputs"][name].set_value(default_inputs[name])
+
+                elif input_type == "parameter":
+                    self.settings["workflow_inputs"][name] = ui.StringField().model
+                    if name in default_inputs:
+                        self.settings["workflow_inputs"][name].set_value(default_inputs[name])
+
                 else:
                     carb.log_error(f"Unknown input type {input_type}")
+
+        if not len(self.dataset_input_names) > 0:
+            return
+        ui.Label("Dataset Input Local File Selector:")
+        with ui.HStack(height=0, spacing=SPACING):
+            self.settings["local_file_selector"] = MinimalModel(self.dataset_input_names)
+            self.settings["local_file_selector"].set_model_state(default["local_file_selector"])
+            ui.ComboBox(self.settings["local_file_selector"])
+            ui.Button("Select File", clicked_fn=lambda: self._get_fname_from_explorer())
 
         # Only want launch_workflow when we have the inputs
         ui.Button("Launch Workflow", clicked_fn=lambda: self._launch_workflow())
@@ -401,3 +420,24 @@ class Window(ui.Window):
             shutil.move(file, data_path + os.sep + uid + os.sep + file_name)
 
         tempdir.cleanup()
+
+    def _get_fname_from_explorer(self):
+        name_idx = self.settings["local_file_selector"].get_item_value_model(None, 1).get_value_as_int()
+        name = self.dataset_input_names[name_idx]
+        '''To get the file name from the explorer'''
+        file_importer = get_file_importer()
+        file_importer.show_window(
+            title=f"Import File for Workflow Input: {name}",
+            import_handler=self._import_handler
+        )
+        return
+
+    def _import_handler(self, filename: str, dirname: str, selections: List[str] = []):
+        '''To import the file'''
+        carb.log_info(f"> Import '{filename}' from '{dirname}' or selected files '{selections}'")
+
+        name_idx = self.settings["local_file_selector"].get_item_value_model(None, 1).get_value_as_int()
+        name = self.dataset_input_names[name_idx]
+        self.settings["workflow_inputs"][name].set_value(os.path.join(dirname, filename))
+        self._refresh_screen()
+        return
