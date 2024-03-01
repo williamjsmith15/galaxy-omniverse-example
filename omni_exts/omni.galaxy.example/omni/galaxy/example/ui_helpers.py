@@ -1,4 +1,6 @@
 import os
+import json
+from datetime import datetime
 
 import omni.ui as ui
 import omni.usd
@@ -47,3 +49,20 @@ def import_USD(path_to_import):
     prim = stage.DefinePrim(f"/{basename}", 'Xform')
     prim.GetReferences().AddReference(f'file:{path_to_import}')
 
+
+def add_uid_to_prov(uid, wf_name):
+    current_path = os.path.dirname(os.path.abspath(__file__))
+    parent_path = current_path.split('omni_exts')[0]
+    data_path = os.path.join(parent_path, "omni-data")
+
+    uid_previous = {}
+
+    file_path = os.path.join(data_path, "uid_track.json")
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as file:
+            uid_previous = json.load(file)
+
+    uid_previous[uid] = f'{wf_name} at {datetime.now()}'
+
+    with open(file_path, 'w') as file:
+        json.dump(uid_previous, file)

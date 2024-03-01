@@ -13,7 +13,7 @@ from typing import List
 import carb  # pylint: disable=import-error
 import omni.ui as ui  # pylint: disable=import-error
 from omni.kit.window.file_importer import get_file_importer  # pylint: disable=import-error
-from .ui_helpers import MinimalModel, import_USD
+from .ui_helpers import MinimalModel, import_USD, add_uid_to_prov
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 parent_path = current_path.split('omni_exts')[0]
@@ -227,31 +227,32 @@ class Window(ui.Window):
                 else:
                     carb.log_error(f"Unknown input type {input_type}")
 
-        if not len(self.dataset_input_names) > 0:
-            return
-        ui.Label("Dataset Input Local File Selector:")
-        with ui.HStack(height=0, spacing=SPACING):
-            self.settings["local_file_selector"] = MinimalModel(self.dataset_input_names)
-            self.settings["local_file_selector"].set_model_state(default["local_file_selector"])
-            ui.ComboBox(self.settings["local_file_selector"])
-            ui.Button("Select File", clicked_fn=lambda: self._get_fname_from_explorer())
+        if len(self.dataset_input_names) > 0:
+            ui.Label("Dataset Input Local File Selector:")
+            with ui.HStack(height=0, spacing=SPACING):
+                self.settings["local_file_selector"] = MinimalModel(self.dataset_input_names)
+                self.settings["local_file_selector"].set_model_state(default["local_file_selector"])
+                ui.ComboBox(self.settings["local_file_selector"])
+                ui.Button("Select File", clicked_fn=lambda: self._get_fname_from_explorer())
 
         # Only want launch_workflow when we have the inputs
         ui.Button("Launch Workflow", clicked_fn=lambda: self._launch_workflow())
 
     def _build_file_manager(self):
         self._get_folders()
-        carb.log_info(f"Folders: {self.folders}")
 
         if len(self.folders) == 0:
+            carb.log_warn("No folders found")
             return
 
+        carb.log_info(f"Folders: {list(self.folders.values())}")
+
         ui.Label("Folders:")
-        self.settings["selected_folder_idx"] = MinimalModel(self.folders)
+        self.settings["selected_folder_idx"] = MinimalModel(list(self.folders.values()))
         self.settings["selected_folder_idx"].set_model_state(default["selected_folder_idx"])
         ui.ComboBox(self.settings["selected_folder_idx"])
 
-        self._get_files(self.folders[default["selected_folder_idx"]])
+        self._get_files(list(self.folders.keys())[default["selected_folder_idx"]])
         carb.log_info(f"Files: {self.files}")
 
         if len(self.files) == 0:
@@ -366,9 +367,12 @@ class Window(ui.Window):
         self.output_field.set_value(self.output_prev_commands)
 
     def _get_folders(self):
-        self.folders = []
-        for uid in os.listdir(data_path):
-            self.folders.append(uid)
+        self.folders = {}
+        uid_track_file = os.path.join(data_path, "uid_track.json")
+        if not os.path.exists(uid_track_file):
+            return
+        with open(uid_track_file, 'r') as f_read:
+            self.folders = json.load(f_read)
 
     def _get_files(self, uid):
         self.files = []
@@ -376,13 +380,13 @@ class Window(ui.Window):
             self.files.append(file)
 
     def _pull_file(self, uid_idx, file_idx):
-        uid = self.folders[uid_idx]
+        uid = list(self.folders.keys())[uid_idx]
         file = self.files[file_idx]
 
         carb.log_info(f"Pulling {file} from {uid}")
         file_path = data_path + os.sep + uid + os.sep + file
         if not os.path.exists(file_path):
-            carb.log_error(f"File {file} does not exist in {uid}")
+            carb.log_error(f"File {file} does not exist in {uid}, try again and remeber to refresh!")
             return
         ext = os.path.splitext(file_path)[-1]
         if ext == ".json":
@@ -420,6 +424,7 @@ class Window(ui.Window):
             carb.log_info(f"File: {file}")
             shutil.move(file, data_path + os.sep + uid + os.sep + file_name)
 
+        add_uid_to_prov(uid, workflow)
         tempdir.cleanup()
 
     def _get_fname_from_explorer(self):
