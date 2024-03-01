@@ -424,7 +424,7 @@ class Window(ui.Window):
     def _get_fname_from_explorer(self):
         name_idx = self.settings["local_file_selector"].get_item_value_model(None, 1).get_value_as_int()
         name = self.dataset_input_names[name_idx]
-        '''To get the file name from the explorer'''
+
         file_importer = get_file_importer()
         file_importer.show_window(
             title=f"Import File for Workflow Input: {name}",
