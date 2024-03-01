@@ -430,7 +430,6 @@ class Window(ui.Window):
             title=f"Import File for Workflow Input: {name}",
             import_handler=self._import_handler
         )
-        return
 
     def _import_handler(self, filename: str, dirname: str, selections: List[str] = []):
         '''To import the file'''
@@ -440,4 +439,3 @@ class Window(ui.Window):
         name = self.dataset_input_names[name_idx]
         self.settings["workflow_inputs"][name].set_value(os.path.join(dirname, filename))
         self._refresh_screen()
-        return
