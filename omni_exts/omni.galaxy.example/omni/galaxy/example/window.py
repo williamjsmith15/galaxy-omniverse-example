@@ -13,7 +13,7 @@ from typing import List
 import carb  # pylint: disable=import-error
 import omni.ui as ui  # pylint: disable=import-error
 from omni.kit.window.file_importer import get_file_importer  # pylint: disable=import-error
-from .ui_helpers import MinimalModel
+from .ui_helpers import MinimalModel, import_USD
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 parent_path = current_path.split('omni_exts')[0]
@@ -396,7 +396,8 @@ class Window(ui.Window):
                 self._new_print(f"File {file} from {uid}:\n{data}")
         elif 'usd' in ext:
             carb.log_info(f"Opening {file_path}")
-            carb.log_error("USD File IO not yet implemented")
+            import_USD(file_path)
+            # carb.log_error("USD File IO not yet implemented")
         else:
             carb.log_error(f"File type {ext} not yet implemented")
 

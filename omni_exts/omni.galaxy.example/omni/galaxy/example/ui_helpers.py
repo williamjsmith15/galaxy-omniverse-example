@@ -1,4 +1,7 @@
+import os
+
 import omni.ui as ui
+import omni.usd
 
 
 class MinimalItem(ui.AbstractItem):
@@ -33,3 +36,14 @@ class MinimalModel(ui.AbstractItemModel):
 
     def set_model_state(self, value=0):
         self._current_index.set_value(value)
+
+
+def import_USD(path_to_import):
+    stage = omni.usd.get_context().get_stage()
+
+    basename = os.path.splitext(os.path.basename(path_to_import))[0]
+    cleaned_basename = [c for c in basename if c.isalnum() or c.isspace()]
+    basename = "".join(cleaned_basename)
+    prim = stage.DefinePrim(f"/{basename}", 'Xform')
+    prim.GetReferences().AddReference(f'file:{path_to_import}')
+
