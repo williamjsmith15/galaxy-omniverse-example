@@ -19,3 +19,18 @@ To modify or add tools:
 3. Restart the galaxy container:
 
     `./restart-galaxy.sh`
+
+
+Common issues:
+ - On windows getting permissions errors, remove special characters:
+
+   `sed -i -e 's/\r$//' start-galaxy.sh`
+   
+ - Then sort permissions:
+
+   `chmod +x start-galaxy.sh`
+   
+ - And run as normal:
+
+   `./start-galaxy.sh`
+   
