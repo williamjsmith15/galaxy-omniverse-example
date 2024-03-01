@@ -1,0 +1,31 @@
+<tool id="h5m_to_usd" name="CAD h5m to usd" version="0.1.0">
+
+    <description>h5m to vtk CAD converter</description>
+  
+    <requirements>
+        <container type="docker">williamjsmith15/omniverse-meshio:20072023</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        ln -fs '$h5m_CAD' cad.h5m &&
+        meshio convert cad.h5m cad.usd 2>&1 &&
+        mv cad.usd '$usd_CAD'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="h5m_CAD" label="h5m_CAD"/>
+    </inputs>
+  
+    <outputs>
+      <data format="usd" name="usd_CAD" label="usd_CAD"/>
+    </outputs>
+  
+    <help>
+      This tool takes in a h5m CAD file and outputs the converted file in usd format.
+    </help>
+  
+    <citations>
+    </citations>
+  </tool>
