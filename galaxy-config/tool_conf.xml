@@ -17,7 +17,7 @@
     <tool file="complex/openmc/openmc.xml"/>
     <tool file="complex/h5m_to_vtk/h5m_to_vtk.xml"/>
     <tool file="complex/tracks_to_vtp/tracks_to_vtp.xml"/>
-    <tool file="complex/h5m_to_usd/h5m_to_usd.xml"/>
+    <tool file="complex/h5m_to_stl/h5m_to_stl.xml"/>
   </section>
   <section id="collection_operations" name="Collection Operations">
     <tool file="${model_tools_path}/unzip_collection.xml" labels="new" />

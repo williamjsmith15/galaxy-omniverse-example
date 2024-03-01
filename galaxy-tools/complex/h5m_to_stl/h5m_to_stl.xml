@@ -1,6 +1,6 @@
-<tool id="h5m_to_usd" name="CAD h5m to usd" version="0.1.0">
+<tool id="h5m_to_stl" name="h5m to stl" version="0.1.0">
 
-    <description>h5m to vtk CAD converter</description>
+    <description>h5m to stl CAD converter</description>
   
     <requirements>
         <container type="docker">williamjsmith15/omniverse-meshio:20072023</container>
@@ -9,8 +9,8 @@
     <command>
       <![CDATA[
         ln -fs '$h5m_CAD' cad.h5m &&
-        meshio convert cad.h5m cad.usd 2>&1 &&
-        mv cad.usd '$usd_CAD'
+        meshio convert cad.h5m cad.stl 2>&1 &&
+        mv cad.usd '$stl_CAD'
       ]]>
     </command>
   
@@ -19,11 +19,11 @@
     </inputs>
   
     <outputs>
-      <data format="usd" name="usd_CAD" label="usd_CAD"/>
+      <data format="stl" name="stl_CAD" label="stl_CAD"/>
     </outputs>
   
     <help>
-      This tool takes in a h5m CAD file and outputs the converted file in usd format.
+      This tool takes in a h5m CAD file and outputs the converted file in stl format.
     </help>
   
     <citations>
