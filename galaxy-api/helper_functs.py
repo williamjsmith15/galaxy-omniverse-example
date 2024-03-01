@@ -257,12 +257,12 @@ def get_inputs(server, api_key, workflow_name):
         if len(inputs) > 0 and name == "Input dataset":
             for wf_input in inputs:
                 input_array.append(
-                    ('dataset', wf_input['name'])
+                    ('dataset', wf_input['name'], steps[step]['id'])
                 )
         if len(inputs) > 0 and name == "Input parameter":
             for wf_input in inputs:
                 input_array.append(
-                    ('parameter', wf_input['name'])
+                    ('parameter', wf_input['name'], steps[step]['id'])
                 )
 
     return input_array

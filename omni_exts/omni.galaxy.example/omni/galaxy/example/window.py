@@ -302,7 +302,8 @@ class Window(ui.Window):
 
         self.workflow_inputs = []
 
-        for input_type, name in get_inputs(server, api_key, workflow):
+        for input_type, name, step_id in get_inputs(server, api_key, workflow):
+            carb.log_info(f"Input: {input_type}, {name}, {step_id}")
             self.workflow_inputs.append((input_type, name))
         self._new_print(f"Inputs: {self.workflow_inputs}")
         self._refresh_screen()
