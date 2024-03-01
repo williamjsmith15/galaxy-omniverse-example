@@ -10,7 +10,7 @@
       <![CDATA[
         ln -fs '$h5m_CAD' cad.h5m &&
         meshio convert cad.h5m cad.stl 2>&1 &&
-        mv cad.usd '$stl_CAD'
+        mv cad.stl '$stl_CAD'
       ]]>
     </command>
   
