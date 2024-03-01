@@ -1,0 +1,30 @@
+<tool id="stl_to_obj" name="stl to obj" version="0.1.0">
+    <description>CAD conversion from stl to obj</description>
+  
+    <requirements>
+      <container type="docker">williamjsmith15/omniverse-meshio:20072023</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        ln -fs '$stl_CAD' cad.stl &&
+        meshio convert cad.stl cad.obj 2>&1 &&
+        mv cad.obj '$obj_CAD'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="stl_CAD" label="stl_CAD"/>
+    </inputs>
+  
+    <outputs>
+      <data format="obj" name="obj_CAD" label="obj_CAD"/>
+    </outputs>
+  
+    <help>
+      This tool takes in a stl geometry to produce a obj version of the CAD.
+    </help>
+  
+    <citations>
+    </citations>
+  </tool>
