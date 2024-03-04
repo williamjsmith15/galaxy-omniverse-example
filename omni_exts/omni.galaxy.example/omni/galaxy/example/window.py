@@ -418,6 +418,8 @@ class Window(ui.Window):
         uid = str(uuid.uuid4())
         tempdir = launch_workflow(server, api_key, workflow, inputs, uid, True)
 
+        self._new_print(f"Workflow {workflow} finished, saving outputs to: {data_path + os.sep + uid}")
+
         if not os.path.exists(data_path):
             os.mkdir(data_path)
 
@@ -425,11 +427,12 @@ class Window(ui.Window):
 
         for file_name in os.listdir(tempdir.name):
             file = tempdir.name + os.sep + file_name
-            carb.log_info(f"File: {file}")
+            self._new_print(f"Saving file: {file}")
             shutil.move(file, data_path + os.sep + uid + os.sep + file_name)
 
         add_uid_to_prov(uid, workflow)
         tempdir.cleanup()
+        self._new_print(f'Workflow call finished.')
 
     def _get_fname_from_explorer(self):
         name_idx = self.settings["local_file_selector"].get_item_value_model(None, 1).get_value_as_int()
