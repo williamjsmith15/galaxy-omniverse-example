@@ -398,6 +398,10 @@ class Window(ui.Window):
             with open(file_path) as f_read:
                 data = f_read.read()
                 self._new_print(f"File {file} from {uid}:\n{data}")
+        elif ext == ".out":
+            with open(file_path) as f_read:
+                data = f_read.read()
+                self._new_print(f"File {file} from {uid}:\n{data}")
         elif 'usd' in ext:
             carb.log_info(f"Opening {file_path}")
             import_USD(file_path)
