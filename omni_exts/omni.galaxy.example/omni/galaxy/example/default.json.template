@@ -1,0 +1,9 @@
+{
+"galaxy_server": "localhost:8080",
+"galaxy_api_key": "",
+"workflow_idx": 0,
+"workflow_inputs": {},
+"selected_folder_idx": 0,
+"selected_file_idx": 0,
+"local_file_selector": 0
+}
