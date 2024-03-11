@@ -1,0 +1,35 @@
+<tool id="step_to_vtk" name="step_to_vtk" version="0.1.0">
+
+    <description>Simple Tool 5 - Running Scripts in Tools</description>
+  
+    <requirements>
+      <container type="docker">nttaudom/gmsh:01.12.23</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        cp '$Input_Step' 'geometry.step' &&
+        python3 '$__tool_directory__/step_to_vtk.py' '$Output_File' 2>&1 &&
+
+        mv output_file.vtk '$Output_File'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="Input_Step" label="Input_Step" help="Input reactor step file"/>
+    </inputs>
+
+    <outputs>
+      <data format="data" name="Output_File" label="Output_File" help="Txt file to print to the std_out. Format: txt"/>
+    </outputs>
+
+    <help>
+      This tool run the command writes the file input 'Text_To_Write' to the txt file 'Output_File' in an Ubuntu 20.04 container.
+      This is done via a python script to demonstrate running scripts in Galaxy tools.
+      Expected output: 
+      std_out: ''
+      std_err: ''
+      outputs: Output_File: Content of the 'File_To_Write' input
+    </help>
+
+  </tool>

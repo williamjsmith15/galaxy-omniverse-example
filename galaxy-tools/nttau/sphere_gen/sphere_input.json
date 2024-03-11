@@ -1,0 +1,20 @@
+{
+    "geometry": {
+      "radial_build": [0.1,8.48,0.005,1, 0.2],
+      "component_names": ["Plasma", "Vacuum", "First Wall", "Blanket", "Vessel"],
+      "cut_in_half": true,
+      "hollow_core": true
+    },
+    "beamlines":{
+      "gen_beamlines": true,
+      "beamline_dimensions": [10,0.3,0.3],
+      "layer_spacing": [10, 15, 10, 15, 10]
+    },
+    "sphere_data": {
+      "num_layers": 8,
+      "mesh_factor": 0.2
+    }
+
+  }
+  
+  

@@ -8,7 +8,14 @@ gravity:
 
 galaxy:
   admin_users:
-   - admin@hotmail.co.uk
+   - sophie@nttaudigital.com
+   - dominic@nttaudigital.com
+   - omer@nttaudigital.com
+   - luis@nttaudigital.com
+   - simon@nttaudigital.com
+   - chrisb@nttaudigital.com
+   - oliver.woolland@manchester.ac.uk
+   - william.smith-14@postgrad.manchester.ac.uk
   builds_file_path: /galaxy/server/tool-data/shared/ucsc/builds.txt.sample
   container_resolvers_config_file: ''
   data_dir: /galaxy/server/database
@@ -34,3 +41,8 @@ galaxy:
   ucsc_build_sites: /galaxy/server/tool-data/shared/ucsc/ucsc_build_sites.txt.sample
   visualization_plugins_directory: config/plugins/visualizations
   cleanup_job: never
+  allow_user_creation: false
+  allow_user_deletion: true
+  allow_user_impersonation: true
+  require_login: true
+

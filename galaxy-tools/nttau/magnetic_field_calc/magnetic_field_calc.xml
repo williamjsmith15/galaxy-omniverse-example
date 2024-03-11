@@ -1,0 +1,32 @@
+<tool id="magnetic_field_calc" name="magnetic field calc" version="0.1.0">
+
+    <description>Tool to generate the CAD for a tokamak from a radial build</description>
+  
+    <requirements>
+      <container type="docker">nttaudom/paramak:29.11.23</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+      cp '$__tool_directory__/'*py ./ &&
+      python magnetic_field_calc.py '$PF_coils' '$bounding_box' '$Config' &&
+      mv 'PF_B.csv' '$output'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="Config" label="Config" help="Config which contains details of field resolution. Format: JSON"/>
+      <param type="data" name="PF_coils" label="PF_coils" help="csv containing PF coil information. Format: csv"/>
+       <param type="data" name="bounding_box" label="Bounding box coords" help="Coordinates of the reactor bounding box Format: csv"/>
+    </inputs>
+
+    <outputs>
+      <data format="csv" name="output" label="Magnetic Field Calc" help="Output file containing magnetic field info format: csv"/>
+    </outputs>
+
+    <help>
+      This tool calculates the magnetic field for the PF coils of a toroidal reactor or the main coil set for a 
+      MIF fusion device. Output information stored in a .csv file
+    </help>
+
+  </tool>

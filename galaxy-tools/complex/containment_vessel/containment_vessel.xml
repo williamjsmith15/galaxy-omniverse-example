@@ -1,0 +1,33 @@
+<tool id="containment_vessel" name="containment_vessel" version="0.1.0">
+
+    <description>Tool to generate the CAD for a tokamak from a radial build</description>
+  
+    <requirements>
+      <container type="docker">cadquery/cadquery:latest</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+      python '$__tool_directory__/containment_vessel.py' '$Config' &&
+      mv 'containment.step' '$containment_output'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="Config" label="Config" help="Config file for the settings of running geometry generation. Format: JSON"/>
+    </inputs>
+
+    <outputs>s
+      <data format="data" name="containment_output" label="Containment Vessel STEP file" help="This is the output file containing the containment geometry format: step."/>
+    </outputs>
+
+    <help>
+      This tool run the command writes the file input 'Text_To_Write' to the txt file 'Output_File' in an Ubuntu 20.04 container.
+      This is done via a python script to demonstrate running scripts in Galaxy tools.
+      Expected output: 
+      std_out: ''
+      std_err: ''
+      outputs: Output_File: Content of the 'File_To_Write' input
+    </help>
+
+  </tool>

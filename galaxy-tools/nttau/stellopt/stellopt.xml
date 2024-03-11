@@ -1,0 +1,34 @@
+<tool id="stellopt" name="stellopt" version="0.1.0">
+
+    <description>STELLOPT simulation for a stellerator optimisation (vmec and bnorm)</description>
+  
+    <requirements>
+      <container type="docker">nttaudom/stellopt:01.02.24</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+      cp '$input' 'input.reactor' &&
+      xvmec2000 input.reactor &&
+      xbnorm wout_reactor.nc &&
+      mv 'wout_reactor.nc' '$vmec_output' &&
+      mv 'bnorm.reactor' '$bnorm_output'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="input" label="Input" help="VMEC input file"/>
+    </inputs>
+
+    <outputs>
+      <data format="data" name="vmec_output" label="vmec output" help="vmec output file"/>
+      <data format="data" name="bnorm_output" label="bnorm output" help="bnorm output file"/>
+    </outputs>
+
+    <help>
+      This tool runs the VMEC and BNORM simulations for a given input file and 
+      returns the outputs. Note that the outputs should be renamed to wout_reactor.nc and bnorm.
+      reactor respectivley for post processing
+    </help>
+
+  </tool>

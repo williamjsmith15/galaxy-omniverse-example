@@ -1,0 +1,40 @@
+<tool id="tokamakgen" name="tokamakgen" version="0.1.0">
+
+    <description>Tool to generate the CAD for a tokamak from a radial build</description>
+  
+    <requirements>
+      <container type="docker">nttaudom/paramak:29.11.23</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+      cp '$__tool_directory__/'*py ./ &&
+      python generate_geometry.py '$Config' '$TF_coils' '$PF_coils' &&
+      mv 'reactor.step' '$reactor_output_file' &&
+      mv 'coils.step' '$coil_file' &&
+      mv 'radial_build.step' '$reactor_no_coils'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="Config" label="Config" help="Config file for the settings of running geometry generation. Format: JSON"/>
+    </inputs>
+
+    <outputs>
+      <data format="data" name="coil_file" label="Coil Step File" help="This is the output file containing the coil geometry format: step."/>
+      <data format="data" name="reactor_output_file" label="Reactor Step File" help="This is the output file containing the reactor geometry format: step."/>
+      <data format="data" name="reactor_no_coils" label="Radial Build ONLY" help="This is the output file containing the reactor geometry without the coil geometry format: step."/>
+      <data format="csv" name="TF_coils" label="TF Coil Output" help="File containing information about the TF coils (i.e position etc) format: csv"/>
+      <data format="csv" name="PF_coils" label="PF Coil Output" help="File containing information about the PF coils (i.e position etc) format: csv"/>
+    </outputs>
+
+    <help>
+      This tool run the command writes the file input 'Text_To_Write' to the txt file 'Output_File' in an Ubuntu 20.04 container.
+      This is done via a python script to demonstrate running scripts in Galaxy tools.
+      Expected output: 
+      std_out: ''
+      std_err: ''
+      outputs: Output_File: Content of the 'File_To_Write' input
+    </help>
+
+  </tool>

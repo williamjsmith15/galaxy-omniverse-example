@@ -1,0 +1,32 @@
+<tool id="CylinderBCMesh" name="CylinderBCMesh" version="0.1.0">
+
+    <description>Sets Boundary Conditions and Meshes for Cylinders</description>
+  
+    <requirements>
+      <container type="docker">nttaudom/gmsh:08.12.23</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        cp '$Input_Step' 'reactor.step' &&
+        python3 '$__tool_directory__/CylinderBCMesh.py' '$Input_Json' 2>&1 &&
+
+        mv outputfile.msh '$Output_File'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="Input_Json" label="Input JSON" help="Input cylindrical mesh conditions. Format: JSON"/>
+      <param type="data" name="Input_Step" label="Cylinder STEP" help="Input cylindrical meshes. Format: STEP"/>
+    </inputs>
+
+    <outputs>
+      <data format="data" name="Output_File" label="Mesh file" help="Mesh output from gmsh. Format: msh"/>
+    </outputs>
+
+    <help>
+      This tool takes a cylindrical reactor STEP file and creates a mesh - including setting boundary conditions
+      Expected output: .msh 
+    </help>
+
+  </tool>

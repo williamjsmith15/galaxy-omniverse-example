@@ -12,12 +12,30 @@
     <tool file="simple/3/3.xml" />
     <tool file="simple/4/4.xml" />
     <tool file="simple/5/5.xml" />
+    <tool file="simple/6/6.xml" />
   </section>
   <section id="complex" name="Complex Example Tools">
     <tool file="complex/openmc/openmc.xml"/>
     <tool file="complex/h5m_to_vtk/h5m_to_vtk.xml"/>
     <tool file="complex/tracks_to_vtp/tracks_to_vtp.xml"/>
   </section>
+  <section id="openmc" name="Open MC Tools">
+    <tool file="openmc/cad_to_dagmc_galaxy/cad_to_dagmc_galaxy.xml"/> 
+  </section>
+  <section id="nTtau" name="nTtau Digital Tools">
+      <tool file="nttau/tokamakgen/tokamakgen.xml"/>
+      <tool file="complex/step_to_vtk/step_to_vtk.xml"/>
+      <tool file="complex/containment_vessel/containment_vessel.xml"/>
+      <tool file="nttau/sphere_gen/sphere_gen.xml"/>
+      <tool file="nttau/get_bounding_box/get_bounding_box.xml"/>
+      <tool file="nttau/sphereBCMesh/sphereBCMesh.xml"/>
+      <tool file="nttau/CylinderBCMesh/CylinderBCMesh.xml"/>
+      <tool file="nttau/cylinder_gen/cylinder_gen.xml"/>
+      <tool file="nttau/magnetic_field_calc/magnetic_field_calc.xml"/>
+      <tool file="nttau/stellopt/stellopt.xml"/>
+      <tool file="nttau/regcoil/regcoil.xml"/>
+  </section>
+
   <section id="collection_operations" name="Collection Operations">
     <tool file="${model_tools_path}/unzip_collection.xml" labels="new" />
     <tool file="${model_tools_path}/zip_collection.xml" labels="new" />

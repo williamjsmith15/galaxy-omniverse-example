@@ -1,0 +1,31 @@
+<tool id="regcoil" name="regcoil" version="0.1.0">
+
+    <description>REGCOIL stellerator coil design simulation</description>
+  
+    <requirements>
+      <container type="docker">nttaudom/regcoil:02.02.24</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+      cp '$input' 'regcoil_in.reactor' &&
+      regcoil regcoil_in.reactor &&
+      echo 'regcoil success!'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="input" label="Input" help="VMEC input file"/>
+    </inputs>
+
+    <outputs>
+      <data format="data" name="regcoil" label="REGCOIL output" help="vmec output file"/>
+    </outputs>
+
+    <help>
+    Regcoil runs VMEC and BNORM simulations using the provided input file. 
+    Rename the output to 'regcoil_out.reactor.nc' for post-processing. 
+    For issues, refer to regcoil documentation or contact support.
+    </help>
+
+  </tool>

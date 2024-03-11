@@ -1,0 +1,32 @@
+<tool id="sphereBCMesh" name="sphereBCMesh" version="0.1.0">
+
+    <description>Simple Tool 6 - Running Scripts in Tools</description>
+  
+    <requirements>
+      <container type="docker">nttaudom/gmsh:08.12.23</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        cp '$Input_Step' 'reactor.step' &&
+        python3 '$__tool_directory__/GMSHsphereBCMesh.py' '$Input_Json' 2>&1 &&
+
+        mv outputfile.msh '$Output_File'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="Input_Json" label="Input_Json" help="Input spherical mesh conditions Format: JSON"/>
+      <param type="data" name="Input_Step" label="Input_Step" help="Input spherical mesh conditions Format: STEP"/>
+    </inputs>
+
+    <outputs>
+      <data format="data" name="Output_File" label="Output_File" help="Mesh output from gmsh. Format: msh"/>
+    </outputs>
+
+    <help>
+      This tool takes a spherical reactor STEP file and creates a mesh - including setting boundary conditions
+      Expected output: .msh 
+    </help>
+
+  </tool>

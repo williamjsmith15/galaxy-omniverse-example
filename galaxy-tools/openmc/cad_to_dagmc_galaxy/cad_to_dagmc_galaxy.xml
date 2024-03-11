@@ -1,0 +1,41 @@
+<tool id="step_to_dagmc" name="step_to_dagmc_convertor" version="0.1.0">
+
+    <description>The tools converts step files into dagmc .h5m format</description>
+  
+    <requirements>
+      <container type="docker">williamjsmith15/omniverse-openmc:05062023</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        cp '$plasma_Step' 'Plasma.step' &&
+        cp '$blanket_Step' 'Blanket_I.step' &&
+        cp '$vaccum_Step' 'Vacuum.step' &&
+        cp '$firstwall_Step' 'First_Wall.step' &&
+        python3 '$__tool_directory__/convertor_stp_files.py' &&
+
+        mv dagmc.h5m '$dagmc_File'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="plasma_Step" label="plasma_Step" help="Input plasma step file"/>
+      <param type="data" name="blanket_Step" label="blanket_Step" help="Input blanket step file"/>
+      <param type="data" name="vaccum_Step" label="vaccum_Step" help="Input vaccum step file"/>
+      <param type="data" name="firstwall_Step" label="firstwall_Step" help="firstwall reactor step file"/>
+    </inputs>
+
+    <outputs>
+      <data format="data" name="dagmc_File" label="dagmc_File" help="Txt file to print to the h5m_out. Format: txt"/>
+    </outputs>
+
+    <help>
+      This tool run the command writes the file input 'Text_To_Write' to the txt file 'Output_File' in an Ubuntu 20.04 container.
+      This is done via a python script to demonstrate running scripts in Galaxy tools.
+      Expected output: 
+      h5m_out: ''
+      h5m_err: ''
+      outputs: Output_File: Content of the 'File_To_Write' input
+    </help>
+
+  </tool>

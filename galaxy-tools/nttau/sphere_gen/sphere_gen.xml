@@ -1,0 +1,29 @@
+<tool id="sphere_gen" name="sphere_gen" version="0.1.0">
+
+    <description>Tool to generate the CAD for a spherical reaction from a radial build</description>
+  
+    <requirements>
+      <container type="docker">cadquery/cadquery:latest</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+      python '$__tool_directory__/sphere_gen.py' '$Config' &&
+      mv 'reactor.step' '$reactor_output'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="Config" label="Config" help="Config file for the settings of running geometry generation. Format: JSON"/>
+    </inputs>
+
+    <outputs>s
+      <data format="data" name="reactor_output" label="Reactor STEP file" help="This is the output file containing the containment geometry format: STEP."/>
+    </outputs>
+
+    <help>
+      Tool to generate a sphere by creating successive layers from a radial build and other config information
+      from a .JSON file. Returns a .STEP file with additional information about beamlines and coils
+    </help>
+
+  </tool>

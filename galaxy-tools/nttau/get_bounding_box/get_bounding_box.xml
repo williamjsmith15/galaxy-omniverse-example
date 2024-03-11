@@ -1,0 +1,29 @@
+<tool id="get_bounding_box" name="Get Bounding Box" version="0.1.0">
+
+    <description>Utility function to get the bounding box of a given STEP file using freeCAD </description>
+  
+    <requirements>
+      <container type="docker">amrit3701/freecad-cli</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        cp '$Input_Step' 'file_to_import.step' &&
+        python3.8 '$__tool_directory__/get_bounding_box.py' '$Output_File' 
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="Input_Step" label="Input STEP file" help="Input STEP file. Format: STEP"/>
+    </inputs>
+
+    <outputs>
+      <data format="csv" name="Output_File" label="Bounding Box Dimensions" help="Dimensions of the bounding box. Format: csv"/>
+    </outputs>
+
+    <help>
+      This tool takes in a STEP file as input and finds the maxiumum and minimum x,y,z of the object 
+      (The bounding box). This is returned to the user via a .csv file
+    </help>
+
+  </tool>
