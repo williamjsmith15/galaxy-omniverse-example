@@ -18,6 +18,10 @@
     <tool file="complex/openmc/openmc.xml"/>
     <tool file="complex/h5m_to_vtk/h5m_to_vtk.xml"/>
     <tool file="complex/tracks_to_vtp/tracks_to_vtp.xml"/>
+    <tool file="complex/h5m_to_stl/h5m_to_stl.xml"/>
+    <tool file="complex/stl_to_obj/stl_to_obj.xml"/>
+    <tool file="complex/obj_to_usd/obj_to_usd.xml"/>
+    <tool file="complex/vtp_to_obj/vtp_to_obj.xml"/>
   </section>
   <section id="openmc" name="Open MC Tools">
     <tool file="openmc/cad_to_dagmc_galaxy/cad_to_dagmc_galaxy.xml"/> 

@@ -1,0 +1,30 @@
+<tool id="obj_to_usd" name="obj to USD" version="0.1.0">
+    <description>Conversion from obj to USD</description>
+  
+    <requirements>
+      <container type="docker">ghcr.io/uomresearchit/usdutils:14022024</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+      cp '$obj_in' in.obj &&
+      /home/usdzconvert/usdzconvert in.obj out.usd 2>&1 &&
+      mv out.usd '$USD_out'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="obj_in" label="file_obj.obj"/>
+    </inputs>
+  
+    <outputs>
+      <data format="usd" name="USD_out" label="file_USD"/>
+    </outputs>
+  
+    <help>
+      This tool takes in an obj file and converts it to USD.
+    </help>
+  
+    <citations>
+    </citations>
+  </tool>

@@ -1,0 +1,31 @@
+<tool id="h5m_to_stl" name="h5m to stl" version="0.1.0">
+
+    <description>h5m to stl CAD converter</description>
+  
+    <requirements>
+        <container type="docker">williamjsmith15/omniverse-meshio:20072023</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        ln -fs '$h5m_CAD' cad.h5m &&
+        meshio convert cad.h5m cad.stl 2>&1 &&
+        mv cad.stl '$stl_CAD'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="h5m_CAD" label="h5m_CAD"/>
+    </inputs>
+  
+    <outputs>
+      <data format="stl" name="stl_CAD" label="stl_CAD"/>
+    </outputs>
+  
+    <help>
+      This tool takes in a h5m CAD file and outputs the converted file in stl format.
+    </help>
+  
+    <citations>
+    </citations>
+  </tool>

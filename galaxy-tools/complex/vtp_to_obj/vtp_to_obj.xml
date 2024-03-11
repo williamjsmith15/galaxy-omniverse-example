@@ -1,0 +1,30 @@
+<tool id="vtp_obj" name="vtp to obj" version="0.1.0">
+    <description>Converter from vtp to obj</description>
+  
+    <requirements>
+      <container type="docker">ghcr.io/uomresearchit/vtp2obj:06072023</container>
+    </requirements>
+  
+    <command>
+      <![CDATA[
+        cp '$vtp_in' in.vtp &&
+        python3 '$__tool_directory__/vtp_to_obj.py' in.vtp out.obj 2>&1 &&
+        mv out.obj '$obj_out'
+      ]]>
+    </command>
+  
+    <inputs>
+      <param type="data" name="vtp_in" label="file_vtp.vtp"/>
+    </inputs>
+  
+    <outputs>
+      <data format="obj" name="obj_out" label="file_obj"/>
+    </outputs>
+  
+    <help>
+      This tool takes in a vtp file and converts it to an obj file.
+    </help>
+  
+    <citations>
+    </citations>
+  </tool>

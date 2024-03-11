@@ -20,7 +20,7 @@ galaxy:
   container_resolvers_config_file: ''
   data_dir: /galaxy/server/database
   data_manager_config_file: /galaxy/server/config/data_manager_conf.xml.sample
-  datatypes_config_file: /galaxy/server/config/datatypes_conf.xml.sample
+  datatypes_config_file: /galaxy/server/config/datatypes_conf.xml
   dependency_resolvers_config_file: /galaxy/server/config/dependency_resolvers_conf.xml
   external_service_type_config_file: /galaxy/server/config/external_service_types_conf.xml.sample
   file_path: /galaxy/server/database/datasets

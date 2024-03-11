@@ -1,3 +1,6 @@
 *.AppImage
 *.stl
 *.pyc
+*.swp
+default.json
+omni-data/*
