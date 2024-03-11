@@ -1,0 +1,9 @@
+docker run -it -v ${PWD}:/home/ cad_to_dagmc_yml /bin/bash
+
+this is already created now and we can simply pull using the command below.
+
+docker pull container_name
+
+contained name: luisgarciaalen/cad_to_dagmc_yml
+
+docker pull luisgarciaalen/cad_to_dagmc_yml
