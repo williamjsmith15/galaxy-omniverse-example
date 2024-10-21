@@ -9,6 +9,7 @@ gravity:
 galaxy:
   admin_users:
    - admin@hotmail.co.uk
+   - test@testing.org
   builds_file_path: /galaxy/server/tool-data/shared/ucsc/builds.txt.sample
   container_resolvers_config_file: ''
   data_dir: /galaxy/server/database

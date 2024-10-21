@@ -1,0 +1,33 @@
+<tool id="process_plasma" name="Process Plamsa" version="0.1.0">
+  <description>Using UKAEA's PROCESS to predict plasma temperature via a constrained set of parameters.</description>
+
+  <requirements>
+    <container type="docker">ghcr.io/metaverse-colab-for-fusion-energy/process:211024</container>
+  </requirements>
+
+  <command>
+    <![CDATA[
+      cp $__tool_directory__/DEFAULT_IN.DAT . &&
+      python3 '$__tool_directory__/process_in.py' --maj_rad '$maj_rad' --triang '$triang' --elong '$elong' &&
+      process -i ./RUN_IN.DAT &&
+      python3 '$__tool_directory__/process_out.py' > '$te'
+    ]]>
+  </command>
+
+  <inputs>
+    <param type="float" name="maj_rad" value="8" label="Major Radius"/>
+    <param type="float" name="triang" value="0.5" label="Triangularity"/>
+    <param type="float" name="elong" value="1.85" label="Elongation"/>
+  </inputs>
+
+  <outputs>
+    <data type="float" name="te" label="Electron Temperature"/>
+  </outputs>
+
+  <help>
+    Using UKAEA's PROCESS to predict plasma temperature via a constrained set of parameters.
+  </help>
+
+  <citations>
+  </citations>
+</tool>
