@@ -31,8 +31,8 @@ args = parser.parse_args()
 in_dat = InDat(filename='DEFAULT_IN.DAT')
 
 in_dat.add_parameter('rmajor', float(args.maj_rad))
-in_dat.add_parameter('triang', float(args.triangularity))
-in_dat.add_parameter('kappa', float(args.elongation))
+in_dat.add_parameter('triang', float(args.triang))
+in_dat.add_parameter('kappa', float(args.elong))
 
 
 in_dat.write_in_dat(output_filename='RUN_IN.DAT')
