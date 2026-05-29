@@ -33,4 +33,6 @@ Common issues:
  - And run as normal:
 
    `./start-galaxy.sh`
-   
+
+Caution:
+ - The default.json file (from the default.json.template located at omni_exts/omni.galaxy.example/omni/galaxy/example/default.json.template) should contain an API key from the Galaxy instance for the extension to run correctly. If this is the case, treat this as a sensitive file and ensure it is not pushed to any public repository (it is already included in the .gitignore). The API key allows anyone with it to run jobs and access data on the associated account.
